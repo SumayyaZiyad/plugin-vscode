@@ -13,16 +13,12 @@ export function render(context: ExtensionContext, langClient: ExtendedLangClient
     const scripts = `
             function loadedScript(){
                 function renderTree(){
-                    console.log("Test run");
                     ballerinaComposer.renderSyntaxTree(document.getElementById("syntaxTree"));
                 }
 
                 renderTree();
             }
     `;
-
-    const check = getComposerWebViewOptions();
-    console.log(check);
 
     const webViewOptions: WebViewOptions = {
         ...getComposerWebViewOptions(),
