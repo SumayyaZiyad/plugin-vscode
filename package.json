@@ -25,7 +25,8 @@
     "activationEvents": [
         "onLanguage:ballerina",
         "onCommand:ballerina.showExamples",
-        "workspaceContains:Ballerina.toml"
+        "workspaceContains:Ballerina.toml",
+        "onCommand:ballerina.visualizeSyntaxTree"
     ],
     "contributes": {
         "views": {
@@ -250,6 +251,11 @@
                     "light": "./resources/images/icons/refresh.svg",
                     "dark": "./resources/images/icons/refresh-inverse.svg"
                 }
+            },
+            {
+                "command": "ballerina.visualizeSyntaxTree",
+                "title": "Syntax Tree Visualizer",
+                "category": "Ballerina"
             }
         ],
         "menus": {

@@ -29,6 +29,7 @@ import { activateDebugConfigProvider } from './debugger';
 import { activate as activateProjectFeatures } from './project';
 import { activate as activateOverview } from './overview';
 import { activate as activateSyntaxHighlighter } from './syntax-highlighter';
+import { activate as activateSyntaxTree } from './vs-syntax-tree';
 import { StaticFeature, ClientCapabilities, DocumentSelector, ServerCapabilities, DidChangeConfigurationParams } from 'vscode-languageclient';
 import { ExtendedLangClient } from './core/extended-language-client';
 import { log } from './utils';
@@ -91,6 +92,8 @@ export function activate(context: ExtensionContext): Promise<any> {
         activateTreeView(ballerinaExtInstance);
         // Enable Ballerina Syntax Highlighter
         activateSyntaxHighlighter(ballerinaExtInstance);
+        //Enable Ballerina Syntax Tree
+        activateSyntaxTree(ballerinaExtInstance);
 
         ballerinaExtInstance.onReady().then(() => {
             const langClient = <ExtendedLangClient>ballerinaExtInstance.langClient;
