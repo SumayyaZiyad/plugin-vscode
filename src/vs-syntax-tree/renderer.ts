@@ -11,11 +11,21 @@ export function render(context: ExtensionContext, langClient: ExtendedLangClient
     const bodyCss = ``;
     const styles = ``;
     const scripts = `
-            document.getElementById("syntaxTree").innerHTML = "Hello World!";
+            function loadedScript(){
+                function renderTree(){
+                    console.log("Test run");
+                    ballerinaComposer.renderSyntaxTree(document.getElementById("syntaxTree"));
+                }
+
+                renderTree();
+            }
     `;
 
+    const check = getComposerWebViewOptions();
+    console.log(check);
+
     const webViewOptions: WebViewOptions = {
-        ...getComposerWebViewOptions,
+        ...getComposerWebViewOptions(),
         body, scripts, styles, bodyCss
     };
     

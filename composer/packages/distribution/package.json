@@ -18,7 +18,8 @@
     "@ballerina/ballerina-by-examples": "^2.0.0-Preview6-SNAPSHOT",
     "@ballerina/documentation": "^2.0.0-Preview6-SNAPSHOT",
     "@ballerina/font": "^2.0.0-Preview6-SNAPSHOT",
-    "@ballerina/theme": "^2.0.0-Preview6-SNAPSHOT"
+    "@ballerina/theme": "^2.0.0-Preview6-SNAPSHOT",
+    "@ballerina/visualize-syntax-tree": "^2.0.0-Preview6-SNAPSHOT"
   },
   "devDependencies": {
     "@ballerina/composer-cli": "^2.0.0-Preview6-SNAPSHOT"
