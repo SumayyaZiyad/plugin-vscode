@@ -1,17 +1,19 @@
 import * as vscode from 'vscode';
 import { ExtendedLangClient } from '../core/extended-language-client';
 import { BallerinaExtension } from '../core';
-import { getCommonWebViewOptions } from '../utils';
+import { getCommonWebViewOptions, WebViewMethod, WebViewRPCHandler } from '../utils';
 import { render } from './renderer';
- 
+
 let syntaxTreePanel: vscode.WebviewPanel | undefined;
 
 function visualizeSyntaxTree(context: vscode.ExtensionContext, langClient: ExtendedLangClient, ballerinaExtInstance: BallerinaExtension) :void {
-    if (syntaxTreePanel) {
+    if (syntaxTreePanel){
         syntaxTreePanel.dispose();
     }
 
     if (vscode.window.activeTextEditor){
+        let sourceRoot = vscode.window.activeTextEditor.document.uri.path;
+
         syntaxTreePanel = vscode.window.createWebviewPanel(
             'visualizeSyntaxTree',
             'Syntax Tree Visualizer',
@@ -20,8 +22,19 @@ function visualizeSyntaxTree(context: vscode.ExtensionContext, langClient: Exten
             },
             getCommonWebViewOptions()
         );
+
+        const remoteMethods: WebViewMethod[] = [
+            {
+                methodName: "fetchSyntaxTree",
+                handler: (args: any): Thenable<any> => {
+                    return langClient.getSyntaxTree(vscode.Uri.file(args[0]));
+                }
+            }
+        ];
     
-        const displayHtml = render(context, langClient);
+        WebViewRPCHandler.create(syntaxTreePanel, langClient, remoteMethods);
+
+        const displayHtml = render(context, langClient, sourceRoot);
         syntaxTreePanel.webview.html = displayHtml;
     }
     

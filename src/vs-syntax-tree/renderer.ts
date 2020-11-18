@@ -2,22 +2,34 @@ import { ExtendedLangClient } from '../core/extended-language-client';
 import { ExtensionContext } from 'vscode';
 import { getLibraryWebViewContent, WebViewOptions, getComposerWebViewOptions } from '../utils';
 
-export function render(context: ExtensionContext, langClient: ExtendedLangClient)
+export function render(context: ExtensionContext, langClient: ExtendedLangClient, sourceRoot: string)
     : string {
 
     const body = `
-        <div id="syntaxTree" />
+            <div id="treeBody" />
     `;
     const bodyCss = ``;
     const styles = ``;
     const scripts = `
-            function loadedScript(){
-                function renderTree(){
-                    ballerinaComposer.renderSyntaxTree(document.getElementById("syntaxTree"));
-                }
+        function loadedScript() {
+            let docUri = ${JSON.stringify(sourceRoot)};
 
-                renderTree();
+            function fetchSyntaxTree(){
+                return new Promise((resolve, reject) => {
+                    webViewRPCHandler.invokeRemoteMethod('fetchSyntaxTree', [docUri], (response) => {
+                        resolve(response);
+                    });
+                })
             }
+
+            function renderTree(){
+                fetchSyntaxTree().then((response)=>{
+                    ballerinaComposer.renderSyntaxTree(document.getElementById("treeBody"), response.syntaxTree);
+                })
+            }
+
+            renderTree();
+        }
     `;
 
     const webViewOptions: WebViewOptions = {

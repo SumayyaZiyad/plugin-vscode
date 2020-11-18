@@ -129,6 +129,21 @@ export interface GetSynRequest {
     Params : string;
 }
 
+export interface BallerinaSyntaxTree {
+    kind: String;
+    topLevelNodes: any[];
+}
+
+export interface BallerinaSyntaxTreeResponse {
+    syntaxTree?: BallerinaSyntaxTree;
+}
+
+export interface GetSyntaxTreeRequest {
+    documentIdentifier: {
+        uri: string;
+    };
+}
+
 export class ExtendedLangClient extends LanguageClient {
 
     getProjectAST(sourceRoot: string): Thenable<BallerinaASTResponse> {
@@ -216,5 +231,15 @@ export class ExtendedLangClient extends LanguageClient {
             }
             return definitions[0];
         });
+    }
+
+    getSyntaxTree(uri: Uri): Thenable<BallerinaSyntaxTreeResponse> {
+        const req: GetSyntaxTreeRequest = {
+            documentIdentifier: {
+                uri: uri.toString()
+            }
+        };
+        
+        return this.sendRequest("ballerinaDocument/syntaxTree", req);
     }
 }
