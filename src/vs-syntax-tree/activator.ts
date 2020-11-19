@@ -5,31 +5,46 @@ import { getCommonWebViewOptions, WebViewMethod, WebViewRPCHandler } from '../ut
 import { render } from './renderer';
 
 let syntaxTreePanel: vscode.WebviewPanel | undefined;
+let activeEditor: vscode.TextEditor;
 
-function validateForVisualization(context: vscode.ExtensionContext, langClient: ExtendedLangClient) :void {
-    if (syntaxTreePanel){
-        syntaxTreePanel.dispose();
-    }
-
+function validateForVisualization(context: vscode.ExtensionContext, langClient: ExtendedLangClient) :void {    
     if (vscode.window.activeTextEditor){
-        if (!vscode.window.activeTextEditor.document.fileName.endsWith('.bal')){
-            vscode.window.showErrorMessage("Syntax Tree Extension: Please open a Ballerina source file");
+        activeEditor = vscode.window.activeTextEditor;
+
+        if (!activeEditor.document.fileName.endsWith('.bal')){
+            vscode.window.showErrorMessage("Syntax Tree Extension: Please open a Ballerina source file.");
         }
 
         else {
-            visualizeSyntaxTree(context, langClient, vscode.window.activeTextEditor);
+            let sourceRoot = activeEditor.document.uri.path;
+            visualizeSyntaxTree(context, langClient, sourceRoot);
         }
     }
     
     else {
-        vscode.window.showWarningMessage("There is no active file in your workspace.");
+        vscode.window.showWarningMessage("Syntax Tree Extension: Please open a Ballerina source file.");
     }
    
 }
 
-function visualizeSyntaxTree(context: vscode.ExtensionContext, langClient: ExtendedLangClient, activeEditor: vscode.TextEditor){
-    let sourceRoot = activeEditor.document.uri.path;
+function visualizeSyntaxTree(context: vscode.ExtensionContext, langClient: ExtendedLangClient, sourceRoot: string){    
+    vscode.workspace.onDidSaveTextDocument(() => {
+        if (syntaxTreePanel){
+            syntaxTreePanel.webview.postMessage({
+                command: 'update',
+                docUri: sourceRoot
+            });
+        }
+    });
 
+    if (syntaxTreePanel){
+        syntaxTreePanel.dispose();
+    }
+
+    createSyntaxTreeVisualization(context, langClient, sourceRoot);
+}
+
+function createSyntaxTreeVisualization(context: vscode.ExtensionContext, langClient: ExtendedLangClient, sourceRoot: string){
     syntaxTreePanel = vscode.window.createWebviewPanel(
         'visualizeSyntaxTree',
         'Syntax Tree Visualizer',

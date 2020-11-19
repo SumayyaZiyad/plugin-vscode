@@ -12,6 +12,15 @@ export function render(context: ExtensionContext, langClient: ExtendedLangClient
     const styles = ``;
     const scripts = `
         function loadedScript() {
+            window.addEventListener('message', event => {
+                let msg = event.data;
+                switch(msg.command){
+                    case 'update':
+                        docUri: msg.docUri;
+                        renderTree();
+                }
+            });
+
             let docUri = ${JSON.stringify(sourceRoot)};
 
             function fetchSyntaxTree(){
