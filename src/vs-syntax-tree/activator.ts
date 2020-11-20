@@ -22,7 +22,7 @@ function validateForVisualization(context: vscode.ExtensionContext, langClient: 
     }
     
     else {
-        vscode.window.showWarningMessage("Syntax Tree Extension: Please open a Ballerina source file.");
+        vscode.window.showWarningMessage("Syntax Tree Extension: Source file has not been detected.");
     }
    
 }
@@ -37,14 +37,14 @@ function visualizeSyntaxTree(context: vscode.ExtensionContext, langClient: Exten
         }
     });
 
+    createSyntaxTreePanel(context, langClient, sourceRoot);
+}
+
+function createSyntaxTreePanel(context: vscode.ExtensionContext, langClient: ExtendedLangClient, sourceRoot: string){
     if (syntaxTreePanel){
         syntaxTreePanel.dispose();
     }
 
-    createSyntaxTreeVisualization(context, langClient, sourceRoot);
-}
-
-function createSyntaxTreeVisualization(context: vscode.ExtensionContext, langClient: ExtendedLangClient, sourceRoot: string){
     syntaxTreePanel = vscode.window.createWebviewPanel(
         'visualizeSyntaxTree',
         'Syntax Tree Visualizer',
