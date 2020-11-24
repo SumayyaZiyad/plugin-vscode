@@ -13,5 +13,8 @@
     "@ballerina/composer-cli": "^2.0.0-Preview6-SNAPSHOT"
   },
   "author": "ballerina.io",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "elkjs": "^0.7.0"
+  }
 }
