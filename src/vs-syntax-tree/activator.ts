@@ -1,8 +1,11 @@
 import * as vscode from 'vscode';
+import ELK from 'elkjs/lib/elk.bundled';
+
 import { ExtendedLangClient } from '../core/extended-language-client';
 import { BallerinaExtension } from '../core';
 import { getCommonWebViewOptions, WebViewMethod, WebViewRPCHandler } from '../utils';
 import { render } from './renderer';
+import { retrieveGraph } from './treeGraph';
 
 let syntaxTreePanel: vscode.WebviewPanel | undefined;
 let activeEditor: vscode.TextEditor;
@@ -56,8 +59,18 @@ function createSyntaxTreePanel(context: vscode.ExtensionContext, langClient: Ext
 
     const remoteMethods: WebViewMethod[] = [
         {
+            methodName: "fetchTreeGraph",
+            handler: (args: any[]): Thenable<any> => {
+                const graph = retrieveGraph(args[0]);
+                
+                const elk = new ELK();
+                return elk.layout(graph);
+            }
+        },
+
+        {
             methodName: "fetchSyntaxTree",
-            handler: (args: any): Thenable<any> => {
+            handler: (args: any[]): Thenable<any> => {
                 return langClient.getSyntaxTree(vscode.Uri.file(args[0]));
             }
         }

@@ -31,9 +31,19 @@ export function render(context: ExtensionContext, langClient: ExtendedLangClient
                 })
             }
 
+            function fetchTreeGraph(syntaxTree){
+                return new Promise((resolve, reject) => {
+                    webViewRPCHandler.invokeRemoteMethod('fetchTreeGraph', [syntaxTree], (response) => {
+                        resolve(response);
+                    });
+                })
+            }
+
             function renderTree(){
                 fetchSyntaxTree().then((response)=>{
-                    ballerinaComposer.renderSyntaxTree(document.getElementById("treeBody"), response.syntaxTree);
+                    fetchTreeGraph(response).then((resp) => {
+                        ballerinaComposer.renderSyntaxTree(document.getElementById("treeBody"), response);
+                    })
                 })
             }
 
