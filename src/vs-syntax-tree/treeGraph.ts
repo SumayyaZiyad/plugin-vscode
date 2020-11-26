@@ -1,3 +1,5 @@
+import { toString } from "lodash";
+
 interface TreeNode {
     nodeID: string;
     value: string;
@@ -7,21 +9,14 @@ interface TreeNode {
 }
 
 export function retrieveGraph (responseTree: JSON){
-    let res = nodeMapper(responseTree, "", "", []);
-    console.log(JSON.stringify(res, null, 2));
+    let retrievedNodes = nodeMapper(responseTree, "", "", []);
+    let retreievedMap = graphMapper(retrievedNodes);
 
     const graph = {
         id: "root",
         layoutOptions: { 'elk.algorithm': 'layered' },
-        children: [
-            { id: "n1", width: 30, height: 30 },
-            { id: "n2", width: 30, height: 30 },
-            { id: "n3", width: 30, height: 30 }
-        ],
-        edges: [
-            { id: "e1", sources: [ "n1" ], targets: [ "n2" ] },
-            { id: "e2", sources: [ "n1" ], targets: [ "n3" ] }
-        ]
+        children: retreievedMap[0],
+        edges: retreievedMap[1]
     };
 
     return graph;
@@ -29,18 +24,8 @@ export function retrieveGraph (responseTree: JSON){
 
 function nodeMapper (obj: JSON, parentID: string, nodeKind: string, nodeArray: TreeNode[]) { 
     for (var props in obj) {
-        if (typeof obj[props] === "object" || typeof obj[props] === "undefined") {
-            if (obj[props].hasOwnProperty("kind" && "value" && "isToken")){
-                nodeArray.push({
-                    nodeID: "c"+nodeArray.length, 
-                    value: obj[props].value, 
-                    kind:obj[props].kind, 
-                    type: props,
-                    parentNode: parentID
-                });
-            }
-
-            else if(props.match(/^[0-9]+$/) === null && typeof obj[props] === "object"){
+        if (typeof obj[props] === "object") {
+            if(props.match(/^[0-9]+$/) === null && typeof obj[props] === "object"){
                 if (!obj[props].nodeID){
                     obj[props] = {
                         ...obj[props],
@@ -57,6 +42,16 @@ function nodeMapper (obj: JSON, parentID: string, nodeKind: string, nodeArray: T
                 }
 
                 nodeMapper(obj[props], obj[props].nodeID, nodeKind, nodeArray);
+            }
+
+            else if (obj[props].hasOwnProperty("kind" && "value" && "isToken")){
+                nodeArray.push({
+                    nodeID: "c"+nodeArray.length, 
+                    value: obj[props].value, 
+                    kind:obj[props].kind, 
+                    type: props,
+                    parentNode: parentID
+                });
             }
 
             else {
@@ -80,4 +75,26 @@ function nodeMapper (obj: JSON, parentID: string, nodeKind: string, nodeArray: T
     }
 
     return nodeArray;
+}
+
+function graphMapper (nodesArray: TreeNode[]){
+    let i: number, treeNodes: any[] = [], treeEdges: any[] = [];
+
+    for (i=0; i<nodesArray.length; i++){
+        treeNodes.push({
+            id: nodesArray[i].nodeID,
+            width: 30,
+            height: 30
+        });
+
+        if (i!==0){
+            treeEdges.push({
+                id: "e"+i,
+                sources: [toString(nodesArray[i].parentNode)],
+                targets: [toString(nodesArray[i].nodeID)]
+            });
+        }
+    }
+
+    return [treeNodes, treeEdges];
 }

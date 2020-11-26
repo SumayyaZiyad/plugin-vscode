@@ -42,7 +42,7 @@ export function render(context: ExtensionContext, langClient: ExtendedLangClient
             function renderTree(){
                 fetchSyntaxTree().then((response)=>{
                     fetchTreeGraph(response).then((resp) => {
-                        ballerinaComposer.renderSyntaxTree(document.getElementById("treeBody"), response);
+                        ballerinaComposer.renderSyntaxTree(document.getElementById("treeBody"), resp);
                     })
                 })
             }
