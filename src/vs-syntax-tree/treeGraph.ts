@@ -1,8 +1,14 @@
-export function retrieveGraph (responseTree: JSON){
-    const syntaxTree = JSON.stringify(responseTree, null, 2);
-    console.log(syntaxTree);
+interface TreeNode {
+    nodeID: string;
+    value: string;
+    kind: string;
+    type: string;
+    parentNode: string;
+}
 
-    nodeMapper(responseTree, "root", "");
+export function retrieveGraph (responseTree: JSON){
+    let res = nodeMapper(responseTree, "", "", []);
+    console.log(JSON.stringify(res, null, 2));
 
     const graph = {
         id: "root",
@@ -16,31 +22,62 @@ export function retrieveGraph (responseTree: JSON){
             { id: "e1", sources: [ "n1" ], targets: [ "n2" ] },
             { id: "e2", sources: [ "n1" ], targets: [ "n3" ] }
         ]
-    }
+    };
 
     return graph;
 }
 
-function nodeMapper (obj: JSON, parent: any, kind: string) {    
+function nodeMapper (obj: JSON, parentID: string, nodeKind: string, nodeArray: TreeNode[]) { 
     for (var props in obj) {
-        console.log("Incoming prop is: ", props);
-        if (typeof obj[props] == "object" || typeof obj[props] == "undefined") {
+        if (typeof obj[props] === "object" || typeof obj[props] === "undefined") {
             if (obj[props].hasOwnProperty("kind" && "value" && "isToken")){
-                console.log("Leaf Node", props, "parent is", parent, " of kind ", obj[props].kind);
+                nodeArray.push({
+                    nodeID: "c"+nodeArray.length, 
+                    value: obj[props].value, 
+                    kind:obj[props].kind, 
+                    type: props,
+                    parentNode: parentID
+                });
             }
 
-            else if(props.match(/^[0-9]+$/) == null && typeof obj[props] == "object"){
-                console.log("From INTERNAL loop ", props, "is a subnode of ", parent, " of kind ", kind);
-                nodeMapper(obj[props], props, kind);
+            else if(props.match(/^[0-9]+$/) === null && typeof obj[props] === "object"){
+                if (!obj[props].nodeID){
+                    obj[props] = {
+                        ...obj[props],
+                        nodeID: "p"+nodeArray.length
+                    };
+
+                    nodeArray.push({
+                        nodeID: obj[props].nodeID, 
+                        value: props, 
+                        kind: nodeKind, 
+                        type: props,
+                        parentNode: parentID
+                    });
+                }
+
+                nodeMapper(obj[props], obj[props].nodeID, nodeKind, nodeArray);
             }
 
             else {
-                nodeMapper(obj[props], parent, kind);
+                nodeMapper(obj[props], parentID, nodeKind, nodeArray);
             }
         }
 
         else {
-            kind = obj[props];
+            if (props === "kind"){
+                nodeArray.push({
+                    nodeID: "p"+nodeArray.length, 
+                    value: obj[props], 
+                    kind: obj[props], 
+                    type: obj[props],
+                    parentNode: parentID
+                });
+            }
+            nodeKind = obj[props];
+            parentID = "p"+(nodeArray.length-1);
         }
     }
+
+    return nodeArray;
 }
