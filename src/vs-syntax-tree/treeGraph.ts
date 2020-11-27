@@ -9,16 +9,8 @@ interface TreeNode {
 }
 
 export function retrieveGraph (responseTree: JSON){
-    console.log(JSON.stringify(responseTree, null, 2));
-
     let retrievedNodes = nodeMapper(responseTree, "", "", []);
-    console.log(JSON.stringify(retrievedNodes, null, 2));
-
     let retrievedMap = graphMapper(retrievedNodes);
-
-    console.log(JSON.stringify(retrievedMap[0], null, 2));
-    console.log(JSON.stringify(retrievedMap[1], null, 2));
-
 
     const graph = {
         id: "root",

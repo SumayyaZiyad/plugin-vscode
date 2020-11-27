@@ -13,8 +13,6 @@ export class SyntaxTree extends React.Component <SyntaxTreeProps> {
 
     public render (){
         var nodeArray = this.props.responseGraph.children;
-        // var node1 = {id: "x", x: 120, y: 10};
-        // var node2 = {id: "y", x:10, y:50};
 
         return (
             <div>
