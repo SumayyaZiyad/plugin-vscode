@@ -10,11 +10,12 @@ interface TreeNode {
 
 export function retrieveGraph (responseTree: JSON){
     let retrievedNodes = nodeMapper(responseTree, "", "", []);
+
     let retrievedMap = graphMapper(retrievedNodes);
 
     const graph = {
         id: "root",
-        layoutOptions: { 'elk.algorithm': 'layered' },
+        layoutOptions: { 'elk.algorithm': 'mrtree'},
         children: retrievedMap[0],
         edges: retrievedMap[1]
     };
