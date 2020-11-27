@@ -9,14 +9,22 @@ interface TreeNode {
 }
 
 export function retrieveGraph (responseTree: JSON){
+    console.log(JSON.stringify(responseTree, null, 2));
+
     let retrievedNodes = nodeMapper(responseTree, "", "", []);
-    let retreievedMap = graphMapper(retrievedNodes);
+    console.log(JSON.stringify(retrievedNodes, null, 2));
+
+    let retrievedMap = graphMapper(retrievedNodes);
+
+    console.log(JSON.stringify(retrievedMap[0], null, 2));
+    console.log(JSON.stringify(retrievedMap[1], null, 2));
+
 
     const graph = {
         id: "root",
         layoutOptions: { 'elk.algorithm': 'layered' },
-        children: retreievedMap[0],
-        edges: retreievedMap[1]
+        children: retrievedMap[0],
+        edges: retrievedMap[1]
     };
 
     return graph;
@@ -25,7 +33,17 @@ export function retrieveGraph (responseTree: JSON){
 function nodeMapper (obj: JSON, parentID: string, nodeKind: string, nodeArray: TreeNode[]) { 
     for (var props in obj) {
         if (typeof obj[props] === "object") {
-            if(props.match(/^[0-9]+$/) === null && typeof obj[props] === "object"){
+            if (obj[props].hasOwnProperty("kind" && "value" && "isToken")){
+                nodeArray.push({
+                    nodeID: "c"+nodeArray.length, 
+                    value: obj[props].value, 
+                    kind:obj[props].kind, 
+                    type: props,
+                    parentNode: parentID
+                });
+            }
+
+            else if (props.match(/^[0-9]+$/) === null && typeof obj[props] === "object"){
                 if (!obj[props].nodeID){
                     obj[props] = {
                         ...obj[props],
@@ -42,16 +60,6 @@ function nodeMapper (obj: JSON, parentID: string, nodeKind: string, nodeArray: T
                 }
 
                 nodeMapper(obj[props], obj[props].nodeID, nodeKind, nodeArray);
-            }
-
-            else if (obj[props].hasOwnProperty("kind" && "value" && "isToken")){
-                nodeArray.push({
-                    nodeID: "c"+nodeArray.length, 
-                    value: obj[props].value, 
-                    kind:obj[props].kind, 
-                    type: props,
-                    parentNode: parentID
-                });
             }
 
             else {
@@ -83,8 +91,8 @@ function graphMapper (nodesArray: TreeNode[]){
     for (i=0; i<nodesArray.length; i++){
         treeNodes.push({
             id: nodesArray[i].nodeID,
-            width: 30,
-            height: 30
+            width: 120,
+            height: 50
         });
 
         if (i!==0){

@@ -61,8 +61,7 @@ function createSyntaxTreePanel(context: vscode.ExtensionContext, langClient: Ext
         {
             methodName: "fetchTreeGraph",
             handler: (args: any[]): Thenable<any> => {
-                const graph = retrieveGraph(args[0]);
-                
+                const graph = retrieveGraph(args[0]);                
                 const elk = new ELK();
                 return elk.layout(graph);
             }
