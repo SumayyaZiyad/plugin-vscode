@@ -61,9 +61,25 @@ function createSyntaxTreePanel(context: vscode.ExtensionContext, langClient: Ext
         {
             methodName: "fetchTreeGraph",
             handler: (args: any[]): Thenable<any> => {
-                const graph = retrieveGraph(args[0]);                
-                const elk = new ELK();
-                return elk.layout(graph);
+                const fetchGraph = new Promise((resolve, reject) => {
+                    const response : any [] = retrieveGraph(args[0]);                
+                    const elk = new ELK();
+
+                    elk.layout(response[0])
+                        .then((result)=> {
+                            let dataMap = {
+                                treeGraph: result,
+                                nodeArray: response[1]
+                            }
+                            resolve(dataMap);
+                        })
+                        .catch(()=>{
+                            console.log("Oops! Something went wrong!");
+                            reject();
+                        })
+                })
+
+                return fetchGraph;
             }
         },
 

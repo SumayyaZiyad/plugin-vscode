@@ -24,7 +24,7 @@ export function retrieveGraph (responseTree: JSON){
         edges: retrievedMap[1]
     };
 
-    return graph;
+    return [graph, retrievedNodes];
 }
 
 function nodeMapper (obj: JSON, parentID: string, nodeKind: string, nodeArray: TreeNode[]) { 

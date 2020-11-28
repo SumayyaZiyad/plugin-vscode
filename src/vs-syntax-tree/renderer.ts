@@ -41,8 +41,9 @@ export function render(context: ExtensionContext, langClient: ExtendedLangClient
 
             function renderTree(){
                 fetchSyntaxTree().then((response)=>{
-                    fetchTreeGraph(response).then((resp) => {
-                        ballerinaComposer.renderSyntaxTree(document.getElementById("treeBody"), resp);
+                    fetchTreeGraph(response).then((result) => {
+                        console.log(JSON.stringify(result), null, 2);
+                        ballerinaComposer.renderSyntaxTree(document.getElementById("treeBody"), result);
                     })
                 })
             }

@@ -1,9 +1,9 @@
 import React from "react";
-import { SyntaxTreeGraph } from "./tree-interfaces";
+import { ResponseData } from "./tree-interfaces";
 import { TreeNode } from "./TreeNode";
 
 interface SyntaxTreeProps {
-    responseGraph: SyntaxTreeGraph;
+    responseData: ResponseData
 }
 
 export class SyntaxTree extends React.Component <SyntaxTreeProps> {
@@ -12,7 +12,7 @@ export class SyntaxTree extends React.Component <SyntaxTreeProps> {
     }
 
     public render() {
-        const nodeArray = this.props.responseGraph.children;
+        const nodeArray = this.props.responseData.treeGraph.children;
 
         return (
             <div>
