@@ -1,6 +1,6 @@
-export interface SyntaxTreeGraph{
-    id: string,
-    layoutOptions: {},
-    children: [],
-    edges: []
+export interface SyntaxTreeGraph {
+    id: string;
+    layoutOptions: {};
+    children: [];
+    edges: [];
 }

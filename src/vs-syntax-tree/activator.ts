@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import ELK from 'elkjs';
+import ELK from 'elkjs/lib/elk.bundled';
 
 import { ExtendedLangClient } from '../core/extended-language-client';
 import { BallerinaExtension } from '../core';
