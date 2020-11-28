@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import ELK from 'elkjs/lib/elk.bundled';
+import ELK from 'elkjs';
 
 import { ExtendedLangClient } from '../core/extended-language-client';
 import { BallerinaExtension } from '../core';
@@ -52,7 +52,7 @@ function createSyntaxTreePanel(context: vscode.ExtensionContext, langClient: Ext
         'visualizeSyntaxTree',
         'Syntax Tree Visualizer',
         { 
-            viewColumn: vscode.ViewColumn.One, 
+            viewColumn: vscode.ViewColumn.One
         },
         getCommonWebViewOptions()
     );

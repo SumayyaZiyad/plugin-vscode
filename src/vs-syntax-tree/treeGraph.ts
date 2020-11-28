@@ -9,13 +9,21 @@ interface TreeNode {
 }
 
 export function retrieveGraph (responseTree: JSON){
+    console.log(JSON.stringify(responseTree, null, 2));
+
     let retrievedNodes = nodeMapper(responseTree, "", "", []);
+    console.log(JSON.stringify(retrievedNodes, null, 2));
 
     let retrievedMap = graphMapper(retrievedNodes);
 
     const graph = {
         id: "root",
-        layoutOptions: { 'elk.algorithm': 'mrtree'},
+        layoutOptions: { 
+            'elk.algorithm': 'layered',
+            'elk.direction': 'DOWN',
+            'crossingMinimization.strategy': 'INTERACTIVE',
+            'crossingMinimization.semiInteractive': 'true'
+        },
         children: retrievedMap[0],
         edges: retrievedMap[1]
     };
@@ -85,7 +93,10 @@ function graphMapper (nodesArray: TreeNode[]){
         treeNodes.push({
             id: nodesArray[i].nodeID,
             width: 120,
-            height: 50
+            height: 50,
+            layoutOptions: {
+                
+            }
         });
 
         if (i!==0){
