@@ -4,8 +4,6 @@ import { SyntaxTree } from "./SyntaxTree";
 import { ResponseData } from "./tree-interfaces";
 
 export function renderSyntaxTree(target: HTMLElement, responseData: ResponseData) {
-    console.log(responseData);
-
     const responseDataProps = {
         responseData
     };

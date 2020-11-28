@@ -17,12 +17,13 @@ export function retrieveGraph (responseTree: JSON){
         layoutOptions: { 
             'elk.algorithm': 'layered',
             'elk.direction': 'DOWN',
-            'crossingMinimization.strategy': 'INTERACTIVE',
-            'crossingMinimization.semiInteractive': 'true'
+            'elk.layered.crossingMinimization.semiInteractive': 'true'
         },
         children: retrievedMap[0],
         edges: retrievedMap[1]
     };
+
+    console.log(graph);
 
     return [graph, retrievedNodes];
 }
@@ -90,8 +91,8 @@ function graphMapper (nodesArray: TreeNode[]){
             id: nodesArray[i].nodeID,
             width: 120,
             height: 50,
-            layoutOptions: {
-                
+            layoutOptions: { 
+                'elk.position': '('+toString(i)+', 0)' 
             }
         });
 
