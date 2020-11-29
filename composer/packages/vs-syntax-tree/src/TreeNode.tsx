@@ -1,11 +1,8 @@
 import React from "react";
+import { Node } from "./tree-interfaces";
 
 interface TreeNodeProps {
-    node: {
-        id: string,
-        x: number,
-        y: number
-    };
+    node: Node
 }
 
 export class TreeNode extends React.Component<TreeNodeProps> {
@@ -22,13 +19,14 @@ export class TreeNode extends React.Component<TreeNodeProps> {
                     color: "white",
                     height: 50,
                     left: this.props.node.x,
+                    lineHeight: "50px",
                     position: "absolute",
                     textAlign: "center",
                     top: this.props.node.y,
-                    width: 120
+                    width: 150
                 }}
             >
-                {this.props.node.id}
+                {this.props.node.label}
             </div>
         );
     }

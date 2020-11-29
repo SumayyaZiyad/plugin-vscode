@@ -23,8 +23,6 @@ export function retrieveGraph (responseTree: JSON){
         edges: retrievedMap[1]
     };
 
-    console.log(graph);
-
     return [graph, retrievedNodes];
 }
 
@@ -89,8 +87,9 @@ function graphMapper (nodesArray: TreeNode[]){
     for (i=0; i<nodesArray.length; i++){
         treeNodes.push({
             id: nodesArray[i].nodeID,
-            width: 120,
+            width: 150,
             height: 50,
+            label: nodesArray[i].value,
             layoutOptions: { 
                 'elk.position': '('+toString(i)+', 0)' 
             }

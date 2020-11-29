@@ -1,5 +1,5 @@
 import React from "react";
-import { ResponseData } from "./tree-interfaces";
+import { ResponseData, Node } from "./tree-interfaces";
 import { TreeNode } from "./TreeNode";
 
 interface SyntaxTreeProps {
@@ -18,7 +18,7 @@ export class SyntaxTree extends React.Component <SyntaxTreeProps> {
             <div>
                 {
                     nodeArray.map((item, id) => {
-                        const node: {id: string, x: number, y: number} = item;
+                        const node: Node = item;
                         return <TreeNode node={node} key={id} />;
                     })
                 }
