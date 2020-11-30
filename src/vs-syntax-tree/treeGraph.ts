@@ -97,7 +97,7 @@ function graphMapper (nodesArray: TreeNode[]){
             }
         });
 
-        if (i!==0){
+        if (i>0){
             treeEdges.push({
                 id: "e"+i,
                 sources: [toString(nodesArray[i].parentNode)],
