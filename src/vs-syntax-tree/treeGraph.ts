@@ -91,7 +91,7 @@ function graphMapper (nodesArray: TreeNode[]){
             height: 50,
             label: nodesArray[i].value,
             layoutOptions: { 
-                'elk.position': '('+toString(i)+', 0)' 
+                'elk.position': '('+i+', 0)'
             }
         });
 

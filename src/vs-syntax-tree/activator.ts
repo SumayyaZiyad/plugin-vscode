@@ -74,7 +74,7 @@ function createSyntaxTreePanel(context: vscode.ExtensionContext, langClient: Ext
                             resolve(dataMap);
                         })
                         .catch(()=>{
-                            console.log("Oops! Something went wrong!");
+                            console.log("Syntax Tree Extension : Oops! Something went wrong!");
                             reject();
                         })
                 })
