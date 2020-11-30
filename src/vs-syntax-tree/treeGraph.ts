@@ -9,8 +9,7 @@ interface TreeNode {
 }
 
 export function retrieveGraph (responseTree: JSON){
-    let retrievedNodes = nodeMapper(responseTree, "", "", []);
-    let retrievedMap = graphMapper(retrievedNodes);
+    let retrievedMap = nodeMapper(responseTree, "", "", []);
 
     const graph = {
         id: "root",
@@ -25,7 +24,7 @@ export function retrieveGraph (responseTree: JSON){
         edges: retrievedMap[1]
     };
 
-    return [graph, retrievedNodes];
+    return [graph, retrievedMap[2]];
 }
 
 function nodeMapper (obj: JSON, parentID: string, nodeKind: string, nodeArray: TreeNode[]) { 
@@ -80,7 +79,7 @@ function nodeMapper (obj: JSON, parentID: string, nodeKind: string, nodeArray: T
         }
     }
 
-    return nodeArray;
+    return graphMapper(nodeArray);
 }
 
 function graphMapper (nodesArray: TreeNode[]){
@@ -106,5 +105,5 @@ function graphMapper (nodesArray: TreeNode[]){
         }
     }
 
-    return [treeNodes, treeEdges];
+    return [treeNodes, treeEdges, nodesArray];
 }
