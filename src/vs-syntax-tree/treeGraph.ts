@@ -17,7 +17,9 @@ export function retrieveGraph (responseTree: JSON){
         layoutOptions: { 
             'elk.algorithm': 'layered',
             'elk.direction': 'DOWN',
-            'elk.layered.crossingMinimization.semiInteractive': 'true'
+            'elk.layered.crossingMinimization.semiInteractive': 'true',
+            'elk.edgeRouting': 'POLYLINE',
+            'elk.layered.mergeEdges': 'true'
         },
         children: retrievedMap[0],
         edges: retrievedMap[1]
