@@ -1,15 +1,18 @@
-import { toString } from "lodash";
+import { toInteger, uniqueId } from "lodash";
 
 interface TreeNode {
     nodeID: string;
     value: string;
     kind: string;
     type: string;
-    parentNode: string;
+    parentID: string;
+    children: TreeNode[];
 }
 
+let treeNodes: TreeNode[];
+
 export function retrieveGraph (responseTree: JSON){
-    let retrievedMap = nodeMapper(responseTree, "", "", []);
+    const retrievedMap = treeMapper(responseTree, {}, 'root', []);
 
     const graph = {
         id: "root",
@@ -24,86 +27,100 @@ export function retrieveGraph (responseTree: JSON){
         edges: retrievedMap[1]
     };
 
-    return [graph, retrievedMap[2]];
+    return [graph, treeNodes];
 }
 
-function nodeMapper (obj: JSON, parentID: string, nodeKind: string, nodeArray: TreeNode[]) { 
+function treeMapper (obj: JSON, parentObj: TreeNode | any, nodeKind: string, nodeArray: TreeNode[]){
     for (var props in obj) {
         if (typeof obj[props] === "object") {
             if (obj[props].hasOwnProperty("kind" && "value" && "isToken")){
-                nodeArray.push({
-                    nodeID: "c"+nodeArray.length, 
+                parentObj.children.push({
+                    nodeID: "c"+uniqueId(), 
                     value: obj[props].value, 
                     kind:obj[props].kind, 
                     type: props,
-                    parentNode: parentID
+                    parentID: parentObj.nodeID,
+                    children: []
                 });
             }
 
             else if (props.match(/^[0-9]+$/) === null && typeof obj[props] === "object"){
+                let childNode = parentObj;
+
                 if (!obj[props].nodeID){
                     obj[props] = {
                         ...obj[props],
-                        nodeID: "p"+nodeArray.length
+                        nodeID: "p"+uniqueId()
                     };
 
-                    nodeArray.push({
+                    childNode = {
                         nodeID: obj[props].nodeID, 
                         value: props, 
                         kind: nodeKind, 
                         type: props,
-                        parentNode: parentID
-                    });
-                }
+                        parentID: parentObj.nodeID,
+                        children: []
+                    };
 
-                nodeMapper(obj[props], obj[props].nodeID, nodeKind, nodeArray);
+                    nodeArray.length < 1 ? nodeArray.push(childNode) : parentObj.children.push(childNode);  
+                }
+              
+                treeMapper(obj[props], childNode, nodeKind, nodeArray);
             }
 
             else {
-                nodeMapper(obj[props], parentID, nodeKind, nodeArray);
+                treeMapper(obj[props], parentObj, nodeKind, nodeArray);
             }
         }
 
-        else {
-            if (props === "kind"){
-                nodeArray.push({
-                    nodeID: "p"+nodeArray.length, 
-                    value: obj[props], 
-                    kind: obj[props], 
-                    type: obj[props],
-                    parentNode: parentID
-                });
-            }
+        else if (props === "kind"){
+            let childNode = {
+                nodeID: "p"+uniqueId(), 
+                value: obj[props], 
+                kind: obj[props], 
+                type: obj[props],
+                parentID: parentObj.nodeID,
+                children: []
+            };
+
+            parentObj.children.push(childNode);
+            parentObj = childNode;
             nodeKind = obj[props];
-            parentID = "p"+(nodeArray.length-1);
         }
     }
 
-    return graphMapper(nodeArray);
+    treeNodes = nodeArray;
+    return graphMapper(nodeArray, [], []);
 }
 
-function graphMapper (nodesArray: TreeNode[]){
-    let i: number, treeNodes: any[] = [], treeEdges: any[] = [];
+function graphMapper ( array: TreeNode[], graphNodes: any[], graphEdges: any[]) {
+    let i : number;
+    for (i=0; i<array.length; i++){
+        let node : any = array[i].nodeID;
+        let position : any = (node.match(/\d/g)).join("");
 
-    for (i=0; i<nodesArray.length; i++){
-        treeNodes.push({
-            id: nodesArray[i].nodeID,
+        graphNodes.push({
+            id: array[i].nodeID,
             width: 150,
             height: 50,
-            label: nodesArray[i].value,
+            label: array[i].value,
             layoutOptions: { 
-                'elk.position': '('+i+', 0)'
+                'elk.position': '('+(toInteger(position))+', 0)'
             }
         });
 
-        if (i>0){
-            treeEdges.push({
-                id: "e"+i,
-                sources: [toString(nodesArray[i].parentNode)],
-                targets: [toString(nodesArray[i].nodeID)]
-            });
+        if(array[i].value !== "syntaxTree"){
+            graphEdges.push({
+                id: "e"+array[i].nodeID,
+                sources: [array[i].parentID],
+                targets: [array[i].nodeID]
+            })
+        }
+        
+        if(array[i].children.length>0){
+            graphMapper(array[i].children, graphNodes, graphEdges);
         }
     }
 
-    return [treeNodes, treeEdges, nodesArray];
+    return [graphNodes, graphEdges];
 }
