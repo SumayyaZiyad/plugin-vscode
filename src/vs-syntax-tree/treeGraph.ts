@@ -1,28 +1,15 @@
-import { toInteger, uniqueId } from "lodash";
+import { toString } from "lodash";
 
 interface TreeNode {
     nodeID: string;
     value: string;
     kind: string;
     type: string;
-    parentID: string;
-    children: TreeNode[];
+    parentNode: string;
 }
 
 export function retrieveGraph (responseTree: JSON){
-    let nodes : TreeNode[] = [];
-
-    let childNode : TreeNode = {
-        nodeID: uniqueId(), 
-        value: "root", 
-        kind: "root", 
-        type: "root",
-        parentID: '',
-        children: []
-    };
-
-    nodes.push(childNode);
-    const retrievedMap = nodeMapper(responseTree, childNode, 'root', nodes);
+    let retrievedMap = nodeMapper(responseTree, "", "", []);
 
     const graph = {
         id: "root",
@@ -40,92 +27,83 @@ export function retrieveGraph (responseTree: JSON){
     return [graph, retrievedMap[2]];
 }
 
-function nodeMapper (obj: JSON, parentObj: TreeNode, nodeKind: string, nodeArray: TreeNode[]){
+function nodeMapper (obj: JSON, parentID: string, nodeKind: string, nodeArray: TreeNode[]) { 
     for (var props in obj) {
         if (typeof obj[props] === "object") {
             if (obj[props].hasOwnProperty("kind" && "value" && "isToken")){
-                let childNode = {
-                    nodeID: "c"+uniqueId(), 
+                nodeArray.push({
+                    nodeID: "c"+nodeArray.length, 
                     value: obj[props].value, 
                     kind:obj[props].kind, 
                     type: props,
-                    parentID: parentObj.nodeID,
-                    children: []
-                };
-
-                parentObj.children.push(childNode);
+                    parentNode: parentID
+                });
             }
 
-            else if (props.match(/^[0-9]+$/) === null && typeof obj[props] === "object" && !obj[props].nodeID){
-                obj[props] = {
-                    ...obj[props],
-                    nodeID: uniqueId()
-                };
+            else if (props.match(/^[0-9]+$/) === null && typeof obj[props] === "object"){
+                if (!obj[props].nodeID){
+                    obj[props] = {
+                        ...obj[props],
+                        nodeID: "p"+nodeArray.length
+                    };
 
-                let childNode = {
-                    nodeID: "p"+obj[props].nodeID, 
-                    value: props, 
-                    kind: nodeKind, 
-                    type: props,
-                    parentID: parentObj.nodeID,
-                    children: []
-                };
+                    nodeArray.push({
+                        nodeID: obj[props].nodeID, 
+                        value: props, 
+                        kind: nodeKind, 
+                        type: props,
+                        parentNode: parentID
+                    });
+                }
 
-                parentObj.children.push(childNode);
-                nodeMapper(obj[props], childNode, nodeKind, nodeArray);
+                nodeMapper(obj[props], obj[props].nodeID, nodeKind, nodeArray);
             }
 
             else {
-                nodeMapper(obj[props], parentObj, nodeKind, nodeArray);
+                nodeMapper(obj[props], parentID, nodeKind, nodeArray);
             }
         }
 
-        else if (props === "kind"){
-            let childNode = {
-                nodeID: "p"+uniqueId(), 
-                value: obj[props], 
-                kind: obj[props], 
-                type: obj[props],
-                parentID: parentObj.nodeID,
-                children: []
-            };
-
-            parentObj.children.push(childNode);
-            parentObj = childNode;
+        else {
+            if (props === "kind"){
+                nodeArray.push({
+                    nodeID: "p"+nodeArray.length, 
+                    value: obj[props], 
+                    kind: obj[props], 
+                    type: obj[props],
+                    parentNode: parentID
+                });
+            }
             nodeKind = obj[props];
+            parentID = "p"+(nodeArray.length-1);
         }
     }
 
-    return graphMapper(nodeArray, nodeArray, [], []);
+    return graphMapper(nodeArray);
 }
 
-function graphMapper ( nodeArray: TreeNode[], array: TreeNode[], finalNodeArray: any[], finalEdgesArray: any[] ) {
-    let i : number;
-    for (i=0; i<array.length; i++){ 
-        if(array[i].value !== "root"){
-            finalNodeArray.push({
-                id: array[i].nodeID,
-                width: 150,
-                height: 50,
-                label: array[i].value,
-                layoutOptions: { 
-                    'elk.position': '('+(toInteger(array[i].parentID))+', 0)'
-                }
-            });
-    
-            if(array[i].value !== "syntaxTree"){
-                finalEdgesArray.push({
-                    id: "e"+array[i].nodeID,
-                    sources: [array[i].parentID],
-                    targets: [array[i].nodeID]
-                })
-            }
-        }
+function graphMapper (nodesArray: TreeNode[]){
+    let i: number, treeNodes: any[] = [], treeEdges: any[] = [];
 
-        if(array[i].children.length>0){
-            graphMapper(nodeArray, array[i].children, finalNodeArray, finalEdgesArray);
+    for (i=0; i<nodesArray.length; i++){
+        treeNodes.push({
+            id: nodesArray[i].nodeID,
+            width: 150,
+            height: 50,
+            label: nodesArray[i].value,
+            layoutOptions: { 
+                'elk.position': '('+i+', 0)'
+            }
+        });
+
+        if (i>0){
+            treeEdges.push({
+                id: "e"+i,
+                sources: [toString(nodesArray[i].parentNode)],
+                targets: [toString(nodesArray[i].nodeID)]
+            });
         }
     }
 
-    return [finalNodeArray, finalEdgesArray, nodeArray];
+    return [treeNodes, treeEdges, nodesArray];
 }
