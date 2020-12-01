@@ -62,7 +62,7 @@ function createSyntaxTreePanel(context: vscode.ExtensionContext, langClient: Ext
             methodName: "fetchTreeGraph",
             handler: (args: any[]): Thenable<any> => {
                 const fetchGraph = new Promise((resolve, reject) => {
-                    const response : any [] = retrieveGraph(args[0]);                
+                    const response : any [] = retrieveGraph(args[0]); 
                     const elk = new ELK();
 
                     elk.layout(response[0])
@@ -73,9 +73,10 @@ function createSyntaxTreePanel(context: vscode.ExtensionContext, langClient: Ext
                             }
                             resolve(dataMap);
                         })
-                        .catch(()=>{
-                            console.log("Syntax Tree Extension : Oops! Something went wrong!");
-                            reject();
+
+                        .catch((e)=>{
+                            console.log("Syntax Tree Extension : Oops! Something went wrong!", e);
+                            reject(e);
                         })
                 })
 
