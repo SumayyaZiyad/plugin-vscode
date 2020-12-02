@@ -1,11 +1,11 @@
 import React from "react";
-import { ResponseData } from "./tree-interfaces";
-import { TreeNode } from "./components/TreeNode";
 import { TreeNodeEdge } from "./components/TreeEdge";
+import { TreeNode } from "./components/TreeNode";
+import { ResponseData } from "./tree-interfaces";
 
 interface SyntaxTreeProps {
-    responseData: ResponseData,
-    onCollapseTree: (nodeID: string) => void
+    onCollapseTree: (nodeID: string) => void;
+    responseData: ResponseData;
 }
 
 export class SyntaxTree extends React.Component <SyntaxTreeProps> {
@@ -21,17 +21,24 @@ export class SyntaxTree extends React.Component <SyntaxTreeProps> {
             <div>
                 {
                     nodeArray.map((item, id) => {
-                        return <TreeNode node={item} key={id} onCollapseTree={() => this.props.onCollapseTree(item.id)} />;
+                        return <TreeNode
+                                    node={item}
+                                    key={id}
+                                    onCollapseTree={() => this.props.onCollapseTree(item.id)}
+                                />;
                     })
                 }
 
-                    <svg width={this.props.responseData.treeGraph.width} height={this.props.responseData.treeGraph.height}>
-                        {
-                            edgeArray.map((item, id) => {
-                                return <TreeNodeEdge edge={item} key={id} />
-                            })
-                        }
-                    </svg>
+                <svg
+                    width={this.props.responseData.treeGraph.width}
+                    height={this.props.responseData.treeGraph.height}
+                >
+                    {
+                        edgeArray.map((item, id) => {
+                            return <TreeNodeEdge edge={item} key={id} />;
+                        })
+                    }
+                </svg>
             </div>
         );
     }

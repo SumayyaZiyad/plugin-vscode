@@ -10,6 +10,7 @@ interface TreeNode {
 }
 
 let treeNodes: TreeNode[];
+let rootLevel: number = 0;
 
 export function retrieveGraph (responseTree: JSON){
     const retrievedMap = treeMapper(responseTree, {}, 'root', []);
@@ -26,7 +27,8 @@ export function retrieveGraph (responseTree: JSON){
         children: retrievedMap[0],
         edges: retrievedMap[1]
     };
-
+    
+    console.log(treeNodes);
     return [graph, treeNodes];
 }
 
@@ -89,13 +91,12 @@ function treeMapper (obj: JSON, parentObj: TreeNode | any, nodeKind: string, nod
         }
     }
 
-    treeNodes = nodeArray;
-    return graphMapper(nodeArray, [], []);
+    return graphMapper(nodeArray, [], [], rootLevel);
 }
 
-function graphMapper ( array: TreeNode[], graphNodes: any[], graphEdges: any[]) {
+function graphMapper ( array: TreeNode[], graphNodes: any[], graphEdges: any[], level: number) {
     let i : number;
-    for (i=0; i<array.length; i++){
+    for (i=0; i < array.length && level < 3 ; i++){
         let node : any = array[i].nodeID;
         let position : any = (node.match(/\d/g)).join("");
 
@@ -114,12 +115,14 @@ function graphMapper ( array: TreeNode[], graphNodes: any[], graphEdges: any[]) 
                 id: "e"+array[i].nodeID,
                 sources: [array[i].parentID],
                 targets: [array[i].nodeID]
-            })
+            });
         }
         
-        if(array[i].children.length>0){
-            graphMapper(array[i].children, graphNodes, graphEdges);
+        if(array[i].children.length > 0){
+            graphMapper(array[i].children, graphNodes, graphEdges, ++level);
         }
+
+        --level;
     }
 
     return [graphNodes, graphEdges];

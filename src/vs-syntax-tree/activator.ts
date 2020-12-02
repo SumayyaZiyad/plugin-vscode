@@ -69,15 +69,15 @@ function createSyntaxTreePanel(context: vscode.ExtensionContext, langClient: Ext
                             let dataMap = {
                                 treeGraph: result,
                                 nodeArray: response[1]
-                            }
+                            };
                             resolve(dataMap);
                         })
 
                         .catch((e)=>{
                             console.log("Syntax Tree Extension : Oops! Something went wrong!", e);
                             reject(e);
-                        })
-                })
+                        });
+                });
 
                 return fetchGraph;
             }

@@ -1,6 +1,6 @@
 export interface ResponseData {
-    treeGraph: TreeGraph,
-    nodeArray: []
+    treeGraph: TreeGraph;
+    nodeArray: [];
 }
 
 export interface TreeGraph {
@@ -16,7 +16,7 @@ export interface Node {
     id: string;
     x: number;
     y: number;
-    label: string
+    label: string;
 }
 
 export interface TreeEdge {

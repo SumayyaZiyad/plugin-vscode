@@ -2,8 +2,8 @@ import React from "react";
 import { Node } from "../tree-interfaces";
 
 interface TreeNodeProps {
-    node: Node,
-    onCollapseTree: any
+    node: Node;
+    onCollapseTree: any;
 }
 
 export class TreeNode extends React.Component<TreeNodeProps> {

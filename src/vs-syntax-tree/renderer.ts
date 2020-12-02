@@ -39,6 +39,10 @@ export function render(context: ExtensionContext, langClient: ExtendedLangClient
                 })
             }
 
+            function drawTree(treeGraph){
+                ballerinaComposer.renderSyntaxTree(onCollapseTree, treeGraph, document.getElementById("treeBody"));
+            }
+
             function onCollapseTree(nodeID){
                 webViewRPCHandler.invokeRemoteMethod('onCollapseTree', [nodeID]);
             }
@@ -46,7 +50,7 @@ export function render(context: ExtensionContext, langClient: ExtendedLangClient
             function renderTree(){
                 fetchSyntaxTree().then((response)=>{
                     fetchTreeGraph(response).then((result) => {
-                        ballerinaComposer.renderSyntaxTree(document.getElementById("treeBody"), result, onCollapseTree);
+                        drawTree(result);
                     })
                 })
             }

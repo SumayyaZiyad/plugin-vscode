@@ -2,7 +2,7 @@ import React from "react";
 import { TreeEdge } from "../tree-interfaces";
 
 interface TreeEdgeProps {
-    edge: TreeEdge
+    edge: TreeEdge;
 }
 
 export class TreeNodeEdge extends React.Component<TreeEdgeProps> {
@@ -12,9 +12,9 @@ export class TreeNodeEdge extends React.Component<TreeEdgeProps> {
 
     public render() {
         const edgeCoords = this.props.edge.sections;
-        
+
         return (
-            <line 
+            <line
                 x1= {edgeCoords[0].startPoint.x}
                 y1= {edgeCoords[0].startPoint.y}
                 x2= {edgeCoords[0].endPoint.x}

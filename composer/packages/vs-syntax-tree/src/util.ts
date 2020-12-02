@@ -3,10 +3,14 @@ import { render } from "react-dom";
 import { SyntaxTree } from "./SyntaxTree";
 import { ResponseData } from "./tree-interfaces";
 
-export function renderSyntaxTree(target: HTMLElement, responseData: ResponseData, onCollapseTree: (nodeID: string) => void) {
+export function renderSyntaxTree(
+                                 onCollapseTree: (nodeID: string) => void,
+                                 responseData: ResponseData,
+                                 target: HTMLElement
+                                ) {
     const responseDataProps = {
-        responseData,
-        onCollapseTree
+        onCollapseTree,
+        responseData
     };
 
     const SyntaxTreeElement = createElement(SyntaxTree, responseDataProps);
