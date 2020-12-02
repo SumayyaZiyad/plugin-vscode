@@ -39,10 +39,14 @@ export function render(context: ExtensionContext, langClient: ExtendedLangClient
                 })
             }
 
+            function onCollapseTree(nodeID){
+                webViewRPCHandler.invokeRemoteMethod('onCollapseTree', [nodeID]);
+            }
+
             function renderTree(){
                 fetchSyntaxTree().then((response)=>{
                     fetchTreeGraph(response).then((result) => {
-                        ballerinaComposer.renderSyntaxTree(document.getElementById("treeBody"), result);
+                        ballerinaComposer.renderSyntaxTree(document.getElementById("treeBody"), result, onCollapseTree);
                     })
                 })
             }

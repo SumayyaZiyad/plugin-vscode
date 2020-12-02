@@ -5,7 +5,7 @@ import { ExtendedLangClient } from '../core/extended-language-client';
 import { BallerinaExtension } from '../core';
 import { getCommonWebViewOptions, WebViewMethod, WebViewRPCHandler } from '../utils';
 import { render } from './renderer';
-import { retrieveGraph } from './treeGraph';
+import { retrieveGraph } from './graphGenerator';
 
 let syntaxTreePanel: vscode.WebviewPanel | undefined;
 let activeEditor: vscode.TextEditor;
@@ -87,6 +87,14 @@ function createSyntaxTreePanel(context: vscode.ExtensionContext, langClient: Ext
             methodName: "fetchSyntaxTree",
             handler: (args: any[]): Thenable<any> => {
                 return langClient.getSyntaxTree(vscode.Uri.file(args[0]));
+            }
+        },
+
+        {
+            methodName: "onCollapseTree",
+            handler: (args: any[]): Thenable<any> => {
+               console.log("The node to be collapsed is: ", args[0]);
+               return Promise.resolve();
             }
         }
     ];

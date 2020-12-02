@@ -1,10 +1,11 @@
 import React from "react";
 import { ResponseData } from "./tree-interfaces";
-import { TreeNode } from "./TreeNode";
-import { TreeNodeEdge } from "./TreeEdge";
+import { TreeNode } from "./components/TreeNode";
+import { TreeNodeEdge } from "./components/TreeEdge";
 
 interface SyntaxTreeProps {
-    responseData: ResponseData
+    responseData: ResponseData,
+    onCollapseTree: (nodeID: string) => void
 }
 
 export class SyntaxTree extends React.Component <SyntaxTreeProps> {
@@ -20,7 +21,7 @@ export class SyntaxTree extends React.Component <SyntaxTreeProps> {
             <div>
                 {
                     nodeArray.map((item, id) => {
-                        return <TreeNode node={item} key={id} />;
+                        return <TreeNode node={item} key={id} onCollapseTree={() => this.props.onCollapseTree(item.id)} />;
                     })
                 }
 

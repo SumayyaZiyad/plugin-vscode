@@ -1,5 +1,5 @@
 import React from "react";
-import { TreeEdge } from "./tree-interfaces";
+import { TreeEdge } from "../tree-interfaces";
 
 interface TreeEdgeProps {
     edge: TreeEdge

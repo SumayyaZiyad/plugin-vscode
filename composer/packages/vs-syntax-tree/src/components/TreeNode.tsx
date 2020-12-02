@@ -1,8 +1,9 @@
 import React from "react";
-import { Node } from "./tree-interfaces";
+import { Node } from "../tree-interfaces";
 
 interface TreeNodeProps {
-    node: Node
+    node: Node,
+    onCollapseTree: any
 }
 
 export class TreeNode extends React.Component<TreeNodeProps> {
@@ -25,6 +26,8 @@ export class TreeNode extends React.Component<TreeNodeProps> {
                     top: this.props.node.y,
                     width: 150
                 }}
+
+                onClick={this.props.onCollapseTree}
             >
                 {this.props.node.label}
             </div>
