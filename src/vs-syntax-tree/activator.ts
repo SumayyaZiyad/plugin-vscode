@@ -31,7 +31,7 @@ function validateForVisualization(context: vscode.ExtensionContext, langClient: 
 }
 
 function visualizeSyntaxTree(context: vscode.ExtensionContext, langClient: ExtendedLangClient, sourceRoot: string){    
-    vscode.workspace.onDidChangeTextDocument(() => {
+    vscode.workspace.onDidSaveTextDocument(() => {
         if (syntaxTreePanel){
             syntaxTreePanel.webview.postMessage({
                 command: 'update',
@@ -61,9 +61,9 @@ function createSyntaxTreePanel(context: vscode.ExtensionContext, langClient: Ext
         {
             methodName: "fetchTreeGraph",
             handler: (args: any[]): Thenable<any> => {
-                const response : any [] = retrieveGraph(args[0]); 
+                const response = retrieveGraph(args[0]); 
                 const elk = new ELK();
-                return elk.layout(response[0])
+                return elk.layout(response)
             }
         },
 
@@ -77,8 +77,8 @@ function createSyntaxTreePanel(context: vscode.ExtensionContext, langClient: Ext
         {
             methodName: "onCollapseTree",
             handler: (args: any[]): Thenable<any> => {
-               console.log("The node to be collapsed is: ", args[0]);
-               return Promise.resolve();
+                console.log("The node to be collapsed is: ", args[0]);
+                return Promise.resolve();
             }
         }
     ];

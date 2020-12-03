@@ -9,14 +9,13 @@ interface TreeNode {
     children: TreeNode[];
 }
 
-let treeNodes: TreeNode[];
 let rootLevel: number = 0;
 
 export function retrieveGraph (responseTree: JSON){
     const retrievedMap = treeMapper(responseTree, {}, 'root', []);
 
     const graph = {
-        id: "root",
+        id: uniqueId(),
         layoutOptions: { 
             'elk.algorithm': 'layered',
             'elk.direction': 'DOWN',
@@ -27,8 +26,8 @@ export function retrieveGraph (responseTree: JSON){
         children: retrievedMap[0],
         edges: retrievedMap[1]
     };
-    
-    return [graph, treeNodes];
+
+    return graph;
 }
 
 function treeMapper (obj: JSON, parentObj: TreeNode | any, nodeKind: string, nodeArray: TreeNode[]){
@@ -106,7 +105,8 @@ function graphMapper (array: TreeNode[], graphNodes: any[], graphEdges: any[], l
             label: array[i].value,
             layoutOptions: { 
                 'elk.position': '('+(toInteger(position))+', 0)'
-            }
+            },
+            parentID: array[i].parentID
         });
 
         if(array[i].value !== "syntaxTree"){

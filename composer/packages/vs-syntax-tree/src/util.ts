@@ -1,6 +1,6 @@
 import { createElement } from "react";
 import { render } from "react-dom";
-import { SyntaxTree } from "./SyntaxTree";
+import SyntaxTree from "./SyntaxTree";
 import { TreeGraph } from "./tree-interfaces";
 
 export function renderSyntaxTree(

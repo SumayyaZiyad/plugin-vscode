@@ -12,16 +12,16 @@ export function render(context: ExtensionContext, langClient: ExtendedLangClient
     const styles = ``;
     const scripts = `
         function loadedScript() {
+            let docUri = ${JSON.stringify(sourceRoot)};
+
             window.addEventListener('message', event => {
                 let msg = event.data;
                 switch(msg.command){
                     case 'update':
                         docUri: msg.docUri;
-                        renderTree();
+                        initiateRendering();
                 }
             });
-
-            let docUri = ${JSON.stringify(sourceRoot)};
 
             function fetchTree(){
                 return new Promise((resolve, reject) => {
