@@ -23,7 +23,7 @@ export function render(context: ExtensionContext, langClient: ExtendedLangClient
 
             let docUri = ${JSON.stringify(sourceRoot)};
 
-            function fetchSyntaxTree(){
+            function fetchTree(){
                 return new Promise((resolve, reject) => {
                     webViewRPCHandler.invokeRemoteMethod('fetchSyntaxTree', [docUri], (response) => {
                         resolve(response);
@@ -31,7 +31,7 @@ export function render(context: ExtensionContext, langClient: ExtendedLangClient
                 })
             }
 
-            function fetchTreeGraph(syntaxTree){
+            function fetchGraph(syntaxTree){
                 return new Promise((resolve, reject) => {
                     webViewRPCHandler.invokeRemoteMethod('fetchTreeGraph', [syntaxTree], (response) => {
                         resolve(response);
@@ -39,23 +39,21 @@ export function render(context: ExtensionContext, langClient: ExtendedLangClient
                 })
             }
 
-            function drawTree(treeGraph){
-                ballerinaComposer.renderSyntaxTree(onCollapseTree, treeGraph, document.getElementById("treeBody"));
+            function renderTree(){
+                return fetchTree().then((response)=>{
+                    return fetchGraph(response);
+                })
             }
 
             function onCollapseTree(nodeID){
                 webViewRPCHandler.invokeRemoteMethod('onCollapseTree', [nodeID]);
             }
 
-            function renderTree(){
-                fetchSyntaxTree().then((response)=>{
-                    fetchTreeGraph(response).then((result) => {
-                        drawTree(result);
-                    })
-                })
+            function initiateRendering(){
+                ballerinaComposer.renderSyntaxTree(onCollapseTree, renderTree, document.getElementById("treeBody"));
             }
-
-            renderTree();
+            
+            initiateRendering();
         }
     `;
 

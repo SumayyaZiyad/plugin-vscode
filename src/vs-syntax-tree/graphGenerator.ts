@@ -28,7 +28,6 @@ export function retrieveGraph (responseTree: JSON){
         edges: retrievedMap[1]
     };
     
-    console.log(treeNodes);
     return [graph, treeNodes];
 }
 
@@ -94,7 +93,7 @@ function treeMapper (obj: JSON, parentObj: TreeNode | any, nodeKind: string, nod
     return graphMapper(nodeArray, [], [], rootLevel);
 }
 
-function graphMapper ( array: TreeNode[], graphNodes: any[], graphEdges: any[], level: number) {
+function graphMapper (array: TreeNode[], graphNodes: any[], graphEdges: any[], level: number) {
     let i : number;
     for (i=0; i < array.length && level < 3 ; i++){
         let node : any = array[i].nodeID;

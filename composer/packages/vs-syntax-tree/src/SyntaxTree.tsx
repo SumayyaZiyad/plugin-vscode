@@ -1,44 +1,68 @@
 import React from "react";
-import { TreeNodeEdge } from "./components/TreeEdge";
 import { TreeNode } from "./components/TreeNode";
-import { ResponseData } from "./tree-interfaces";
+import { TreeGraph } from "./tree-interfaces";
+import { TreeNodeEdge } from "./components/TreeEdge";
 
 interface SyntaxTreeProps {
     onCollapseTree: (nodeID: string) => void;
-    responseData: ResponseData;
+    renderTree: () => Promise<TreeGraph>;
 }
 
-export class SyntaxTree extends React.Component <SyntaxTreeProps> {
+interface SyntaxTreeGraph {
+    treeGraph: TreeGraph
+}
+
+export class SyntaxTree extends React.Component <SyntaxTreeProps, SyntaxTreeGraph> {
+
     constructor(props: SyntaxTreeProps) {
         super(props);
     }
 
+    componentDidMount(){
+        this.props.renderTree().then((treeGraph)=>{
+            this.setState({
+                treeGraph
+            })
+        })
+    }
+
     public render() {
-        const nodeArray = this.props.responseData.treeGraph.children;
-        const edgeArray = this.props.responseData.treeGraph.edges;
+        let nodeArray, edgeArray;
+
+        if(this.state && this.state.treeGraph){
+            nodeArray = this.state.treeGraph.children;
+            edgeArray = this.state.treeGraph.edges;
+        }
 
         return (
             <div>
-                {
-                    nodeArray.map((item, id) => {
-                        return <TreeNode
-                                    node={item}
-                                    key={id}
-                                    onCollapseTree={() => this.props.onCollapseTree(item.id)}
-                                />;
-                    })
-                }
-
-                <svg
-                    width={this.props.responseData.treeGraph.width}
-                    height={this.props.responseData.treeGraph.height}
-                >
+                {this.state && this.state.treeGraph && nodeArray && edgeArray &&
+                    <div>
                     {
-                        edgeArray.map((item, id) => {
-                            return <TreeNodeEdge edge={item} key={id} />;
+                        nodeArray.map((item, id) => {
+                            return <TreeNode
+                                        node={item}
+                                        key={id}
+                                        onCollapseTree={() => this.props.onCollapseTree(item.id)}
+                                    />;
                         })
                     }
-                </svg>
+
+                        <svg
+                            width={this.state.treeGraph.width}
+                            height={this.state.treeGraph.height}
+                        >
+                            {
+                                edgeArray.map((item, id) => {
+                                    return <TreeNodeEdge 
+                                                edge={item} 
+                                                key={id} 
+                                            />;
+                                })
+                            }
+                        </svg>
+                    </div>
+                }
             </div>
         );
     }
