@@ -1,4 +1,4 @@
-import { toInteger, uniqueId } from "lodash";
+import { toInteger } from "lodash";
 
 interface TreeNode {
     nodeID: string;
@@ -9,13 +9,14 @@ interface TreeNode {
     children: TreeNode[];
 }
 
-let rootLevel: number = 0;
+let nodeCount : number, rootLevel: number = 0;
 
 export function retrieveGraph (responseTree: JSON){
+    nodeCount = 0;
     const retrievedMap = treeMapper(responseTree, {}, 'root', []);
 
     const graph = {
-        id: uniqueId(),
+        id: "root",
         layoutOptions: { 
             'elk.algorithm': 'layered',
             'elk.direction': 'DOWN',
@@ -35,13 +36,14 @@ function treeMapper (obj: JSON, parentObj: TreeNode | any, nodeKind: string, nod
         if (typeof obj[props] === "object") {
             if (obj[props].hasOwnProperty("kind" && "value" && "isToken")){
                 parentObj.children.push({
-                    nodeID: "c"+uniqueId(), 
+                    nodeID: `c${nodeCount}`, 
                     value: obj[props].value, 
                     kind:obj[props].kind, 
                     type: props,
                     parentID: parentObj.nodeID,
                     children: []
                 });
+                ++nodeCount;
             }
 
             else if (props.match(/^[0-9]+$/) === null && typeof obj[props] === "object"){
@@ -50,7 +52,7 @@ function treeMapper (obj: JSON, parentObj: TreeNode | any, nodeKind: string, nod
                 if (!obj[props].nodeID){
                     obj[props] = {
                         ...obj[props],
-                        nodeID: "p"+uniqueId()
+                        nodeID: `p${nodeCount}`
                     };
 
                     childNode = {
@@ -63,8 +65,8 @@ function treeMapper (obj: JSON, parentObj: TreeNode | any, nodeKind: string, nod
                     };
 
                     nodeArray.length < 1 ? nodeArray.push(childNode) : parentObj.children.push(childNode);  
+                    ++nodeCount;
                 }
-              
                 treeMapper(obj[props], childNode, nodeKind, nodeArray);
             }
 
@@ -75,7 +77,7 @@ function treeMapper (obj: JSON, parentObj: TreeNode | any, nodeKind: string, nod
 
         else if (props === "kind"){
             let childNode = {
-                nodeID: "p"+uniqueId(), 
+                nodeID: `p${nodeCount}`, 
                 value: obj[props], 
                 kind: obj[props], 
                 type: obj[props],
@@ -84,6 +86,7 @@ function treeMapper (obj: JSON, parentObj: TreeNode | any, nodeKind: string, nod
             };
 
             parentObj.children.push(childNode);
+            ++nodeCount;
             parentObj = childNode;
             nodeKind = obj[props];
         }
@@ -93,8 +96,7 @@ function treeMapper (obj: JSON, parentObj: TreeNode | any, nodeKind: string, nod
 }
 
 function graphMapper (array: TreeNode[], graphNodes: any[], graphEdges: any[], level: number) {
-    let i : number;
-    for (i=0; i < array.length && level < 3 ; i++){
+    for (let i=0; i < array.length && level <3 ; i++){
         let node : any = array[i].nodeID;
         let position : any = (node.match(/\d/g)).join("");
 
@@ -111,7 +113,7 @@ function graphMapper (array: TreeNode[], graphNodes: any[], graphEdges: any[], l
 
         if(array[i].value !== "syntaxTree"){
             graphEdges.push({
-                id: "e"+array[i].nodeID,
+                id: `e${array[i].nodeID}`,
                 sources: [array[i].parentID],
                 targets: [array[i].nodeID]
             });
@@ -119,9 +121,8 @@ function graphMapper (array: TreeNode[], graphNodes: any[], graphEdges: any[], l
         
         if(array[i].children.length > 0){
             graphMapper(array[i].children, graphNodes, graphEdges, ++level);
+            --level;
         }
-
-        --level;
     }
 
     return [graphNodes, graphEdges];
