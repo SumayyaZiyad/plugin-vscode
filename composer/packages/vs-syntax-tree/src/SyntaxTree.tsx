@@ -1,22 +1,24 @@
 import React, {useEffect, useState} from "react";
-import { TreeNode } from "./components/TreeNode";
+import TreeNodeEdge from "./components/TreeEdge";
+import TreeNode from "./components/TreeNode";
 import { TreeGraph } from "./tree-interfaces";
-import { TreeNodeEdge } from "./components/TreeEdge";
 
 interface SyntaxTreeProps {
     onCollapseTree: (nodeID: string) => void;
     renderTree: () => Promise<TreeGraph>;
 }
 
-function SyntaxTree (props: SyntaxTreeProps){
+function SyntaxTree(props: SyntaxTreeProps) {
     const [treeGraph, setTreeGraph] = useState<TreeGraph | undefined>(undefined);
 
     useEffect(() => {
-        props.renderTree().then((treeGraph)=>{
-            setTreeGraph(treeGraph);
-        })
-    }, [props])
-   
+        props.renderTree().then((result) => {
+            setTreeGraph(result);
+        });
+
+        console.log("Use effect has been invoked");
+    }, [props]);
+
     return (
         <div>
             {treeGraph &&
@@ -25,8 +27,8 @@ function SyntaxTree (props: SyntaxTreeProps){
                     treeGraph.children.map((item, id) => {
                         return <TreeNode
                                     node={item}
-                                    key={id}
                                     onCollapseTree={() => props.onCollapseTree(item.id)}
+                                    key={id}
                                 />;
                     })
                 }
@@ -37,9 +39,9 @@ function SyntaxTree (props: SyntaxTreeProps){
                     >
                         {
                             treeGraph.edges.map((item, id) => {
-                                return <TreeNodeEdge 
-                                            edge={item} 
-                                            key={id} 
+                                return <TreeNodeEdge
+                                            edge={item}
+                                            key={id}
                                         />;
                             })
                         }

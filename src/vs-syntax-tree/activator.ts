@@ -63,7 +63,7 @@ function createSyntaxTreePanel(context: vscode.ExtensionContext, langClient: Ext
             handler: (args: any[]): Thenable<any> => {
                 const response = retrieveGraph(args[0]); 
                 const elk = new ELK();
-                return elk.layout(response)
+                return elk.layout(response);
             }
         },
 
@@ -77,7 +77,7 @@ function createSyntaxTreePanel(context: vscode.ExtensionContext, langClient: Ext
         {
             methodName: "onCollapseTree",
             handler: (args: any[]): Thenable<any> => {
-                console.log("The node to be collapsed is: ", args[0]);
+                console.log("The node being collapsed is", args[0]);
                 return Promise.resolve();
             }
         }

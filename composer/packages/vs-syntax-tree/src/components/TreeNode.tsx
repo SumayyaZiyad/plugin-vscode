@@ -6,31 +6,27 @@ interface TreeNodeProps {
     onCollapseTree: any;
 }
 
-export class TreeNode extends React.Component<TreeNodeProps> {
-    constructor(props: TreeNodeProps) {
-        super(props);
-    }
-
-    public render() {
+function TreeNode(props: TreeNodeProps) {
         return (
             <div
                 style={{
-                    backgroundColor: this.props.node.id.includes("c") ? "blue" : "green",
+                    backgroundColor: props.node.id.includes("c") ? "blue" : "green",
                     borderRadius: 10,
                     color: "white",
                     height: 50,
-                    left: this.props.node.x,
+                    left: props.node.x,
                     lineHeight: "50px",
                     position: "absolute",
                     textAlign: "center",
-                    top: this.props.node.y,
+                    top: props.node.y,
                     width: 150
                 }}
 
-                onClick={this.props.onCollapseTree}
+                onClick={props.onCollapseTree}
             >
-                {this.props.node.label}
+                {props.node.label}
             </div>
         );
-    }
 }
+
+export default TreeNode;

@@ -13,6 +13,8 @@ export function renderSyntaxTree(
         renderTree
     };
 
+    console.log("Composer function has been called");
+
     const SyntaxTreeElement = createElement(SyntaxTree, responseDataProps);
     render(SyntaxTreeElement, target);
 }

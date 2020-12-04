@@ -46,13 +46,15 @@ export function render(context: ExtensionContext, langClient: ExtendedLangClient
             }
 
             function onCollapseTree(nodeID){
+                console.log("From renderer: collapse tree has been invoked for id ", nodeID);
                 webViewRPCHandler.invokeRemoteMethod('onCollapseTree', [nodeID]);
             }
 
             function initiateRendering(){
+                console.log("The initiator is being called");
                 ballerinaComposer.renderSyntaxTree(onCollapseTree, renderTree, document.getElementById("treeBody"));
             }
-            
+
             initiateRendering();
         }
     `;
