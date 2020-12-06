@@ -9,10 +9,10 @@ interface TreeNode {
     children: TreeNode[];
 }
 
-let nodeCount : number, rootLevel: number = 0;
+let nodeCount : number, rootLevel: number = 0, nodeMembers: any[], nodeEdges: any[];
 
 export function retrieveGraph (responseTree: JSON){
-    nodeCount = 0;
+    nodeCount = 0; nodeMembers = []; nodeEdges = [];
     const retrievedMap = treeMapper(responseTree, {}, 'root', []);
 
     const graph = {
@@ -27,6 +27,8 @@ export function retrieveGraph (responseTree: JSON){
         children: retrievedMap[0],
         edges: retrievedMap[1]
     };
+
+    nodeMembers = retrievedMap[0]; nodeEdges = retrievedMap[1];
 
     return graph;
 }
@@ -126,4 +128,40 @@ function graphMapper (array: TreeNode[], graphNodes: any[], graphEdges: any[], l
     }
 
     return [graphNodes, graphEdges];
+}
+
+export function updateGraph (){
+    console.log("referenced node parent ID is : ", nodeMembers[nodeMembers.length-1].id);
+
+    nodeMembers.push({
+        id: "testNode",
+        width: 150,
+        height: 50,
+        label: "Test Value",
+        layoutOptions: { 
+            'elk.position': '('+nodeMembers.length+', 0)'
+        },
+        parentID: nodeMembers[nodeMembers.length-1].id
+    });
+
+    nodeEdges.push({
+        id: `e${nodeMembers.length-1}`,
+        sources: [nodeMembers[nodeMembers.length-1].parentID],
+        targets: [nodeMembers[nodeMembers.length-1].id]
+    });
+
+    const graph = {
+        id: "root",
+        layoutOptions: { 
+            'elk.algorithm': 'layered',
+            'elk.direction': 'DOWN',
+            'elk.layered.crossingMinimization.semiInteractive': 'true',
+            'elk.edgeRouting': 'POLYLINE',
+            'elk.layered.mergeEdges': 'true'
+        },
+        children: nodeMembers,
+        edges: nodeEdges
+    };
+
+    return graph;
 }

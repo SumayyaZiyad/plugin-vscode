@@ -5,7 +5,7 @@ import { ExtendedLangClient } from '../core/extended-language-client';
 import { BallerinaExtension } from '../core';
 import { getCommonWebViewOptions, WebViewMethod, WebViewRPCHandler } from '../utils';
 import { render } from './renderer';
-import { retrieveGraph } from './graphGenerator';
+import { retrieveGraph, updateGraph } from './graphGenerator';
 
 let syntaxTreePanel: vscode.WebviewPanel | undefined;
 let activeEditor: vscode.TextEditor;
@@ -57,12 +57,13 @@ function createSyntaxTreePanel(context: vscode.ExtensionContext, langClient: Ext
         getCommonWebViewOptions()
     );
 
+    const elk = new ELK();
+
     const remoteMethods: WebViewMethod[] = [
         {
             methodName: "fetchTreeGraph",
             handler: (args: any[]): Thenable<any> => {
                 const response = retrieveGraph(args[0]); 
-                const elk = new ELK();
                 return elk.layout(response);
             }
         },
@@ -78,7 +79,10 @@ function createSyntaxTreePanel(context: vscode.ExtensionContext, langClient: Ext
             methodName: "onCollapseTree",
             handler: (args: any[]): Thenable<any> => {
                 console.log("The node being collapsed is", args[0]);
-                return Promise.resolve();
+                const resp = updateGraph();
+                console.log(resp);
+                elk.layout(resp).then((result) => {console.log("FROM ELK", result);})
+                return elk.layout(resp);
             }
         }
     ];

@@ -23,36 +23,32 @@ export function render(context: ExtensionContext, langClient: ExtendedLangClient
                 }
             });
 
-            function fetchTree(){
+            function renderTree(){
                 return new Promise((resolve, reject) => {
                     webViewRPCHandler.invokeRemoteMethod('fetchSyntaxTree', [docUri], (response) => {
-                        resolve(response);
+                        webViewRPCHandler.invokeRemoteMethod('fetchTreeGraph', [response], (result) => {
+                            resolve(result);
+                        });
                     });
                 })
             }
 
-            function fetchGraph(syntaxTree){
+            function expandNodes(){
                 return new Promise((resolve, reject) => {
-                    webViewRPCHandler.invokeRemoteMethod('fetchTreeGraph', [syntaxTree], (response) => {
+                    webViewRPCHandler.invokeRemoteMethod('onCollapseTree', [], (response) => {
                         resolve(response);
                     });
                 })
             }
 
-            function renderTree(){
-                return fetchTree().then((response)=>{
-                    return fetchGraph(response);
-                })
-            }
-
-            function onCollapseTree(nodeID){
+            function collapseTree(nodeID){
                 console.log("From renderer: collapse tree has been invoked for id ", nodeID);
-                webViewRPCHandler.invokeRemoteMethod('onCollapseTree', [nodeID]);
+                ballerinaComposer.renderSyntaxTree(collapseTree, expandNodes, document.getElementById("treeBody"));
             }
 
             function initiateRendering(){
                 console.log("The initiator is being called");
-                ballerinaComposer.renderSyntaxTree(onCollapseTree, renderTree, document.getElementById("treeBody"));
+                ballerinaComposer.renderSyntaxTree(collapseTree, renderTree, document.getElementById("treeBody"));
             }
 
             initiateRendering();
