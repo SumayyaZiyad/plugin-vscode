@@ -9,11 +9,11 @@ interface TreeNode {
     children: TreeNode[];
 }
 
-let nodeCount : number, rootLevel: number = 0, nodeMembers: any[], nodeEdges: any[];
+let nodeCount : number, rootLevel: number = 0, nodeMembers: any[], nodeEdges: any[], nodeArray: TreeNode[];
 
 export function retrieveGraph (responseTree: JSON){
-    nodeCount = 0; nodeMembers = []; nodeEdges = [];
-    const retrievedMap = treeMapper(responseTree, {}, 'root', []);
+    nodeCount = 0; nodeMembers = []; nodeEdges = []; nodeArray = [];
+    const retrievedMap = treeMapper(responseTree, {}, 'root');
 
     const graph = {
         id: "root",
@@ -29,11 +29,10 @@ export function retrieveGraph (responseTree: JSON){
     };
 
     nodeMembers = retrievedMap[0]; nodeEdges = retrievedMap[1];
-
     return graph;
 }
 
-function treeMapper (obj: JSON, parentObj: TreeNode | any, nodeKind: string, nodeArray: TreeNode[]){
+function treeMapper (obj: JSON, parentObj: TreeNode | any, nodeKind: string){
     for (var props in obj) {
         if (typeof obj[props] === "object") {
             if (obj[props].hasOwnProperty("kind" && "value" && "isToken")){
@@ -69,11 +68,11 @@ function treeMapper (obj: JSON, parentObj: TreeNode | any, nodeKind: string, nod
                     nodeArray.length < 1 ? nodeArray.push(childNode) : parentObj.children.push(childNode);  
                     ++nodeCount;
                 }
-                treeMapper(obj[props], childNode, nodeKind, nodeArray);
+                treeMapper(obj[props], childNode, nodeKind);
             }
 
             else {
-                treeMapper(obj[props], parentObj, nodeKind, nodeArray);
+                treeMapper(obj[props], parentObj, nodeKind);
             }
         }
 
@@ -130,25 +129,9 @@ function graphMapper (array: TreeNode[], graphNodes: any[], graphEdges: any[], l
     return [graphNodes, graphEdges];
 }
 
-export function updateGraph (){
-    console.log("referenced node parent ID is : ", nodeMembers[nodeMembers.length-1].id);
-
-    nodeMembers.push({
-        id: "testNode",
-        width: 150,
-        height: 50,
-        label: "Test Value",
-        layoutOptions: { 
-            'elk.position': '('+nodeMembers.length+', 0)'
-        },
-        parentID: nodeMembers[nodeMembers.length-1].id
-    });
-
-    nodeEdges.push({
-        id: `e${nodeMembers.length-1}`,
-        sources: [nodeMembers[nodeMembers.length-1].parentID],
-        targets: [nodeMembers[nodeMembers.length-1].id]
-    });
+export function updateGraph (nodeID: string){
+    let intID : number = toInteger(nodeID.replace(/\D/g, ''));
+    findChildren(nodeArray, intID);
 
     const graph = {
         id: "root",
@@ -164,4 +147,44 @@ export function updateGraph (){
     };
 
     return graph;
+}
+
+function findChildren(targetArray: TreeNode[], nodeID: number){
+    for (let i = 0; i < targetArray.length; i++ ){
+        let currentNodeID = toInteger(targetArray[i].nodeID.replace(/\D/g, ''));
+
+        if (currentNodeID === nodeID){
+            return printChildren(targetArray[i].children);
+        }
+
+        else if (targetArray.length === 1 || !targetArray[i+1]) {
+            return findChildren(targetArray[i].children, nodeID);
+        }
+
+        else if (targetArray[i+1] && nodeID < toInteger(targetArray[i+1].nodeID.replace(/\D/g, ''))) {
+            return findChildren(targetArray[i].children, nodeID);
+        }
+    }
+}
+
+function printChildren(children: TreeNode[]){
+    for (let i = 0; i < children.length; i++){
+        console.log("push ", i+1);
+        nodeMembers.push({
+            id: children[i].nodeID,
+            width: 150,
+            height: 50,
+            label: children[i].value,
+            layoutOptions: { 
+                'elk.position': '('+(toInteger(children[i].nodeID))+', 0)'
+            },
+            parentID: children[i].parentID
+        });
+
+        nodeEdges.push({
+            id: `e${children[i].nodeID}`,
+            sources: [children[i].parentID],
+            targets: [children[i].nodeID]
+        });
+    }
 }

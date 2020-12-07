@@ -13,6 +13,7 @@ export function render(context: ExtensionContext, langClient: ExtendedLangClient
     const scripts = `
         function loadedScript() {
             let docUri = ${JSON.stringify(sourceRoot)};
+            let expandNode = "";
 
             window.addEventListener('message', event => {
                 let msg = event.data;
@@ -33,21 +34,20 @@ export function render(context: ExtensionContext, langClient: ExtendedLangClient
                 })
             }
 
+            function collapseTree(nodeID){
+                expandNode = nodeID;
+                ballerinaComposer.renderSyntaxTree(collapseTree, expandNodes, document.getElementById("treeBody"));
+            }
+
             function expandNodes(){
                 return new Promise((resolve, reject) => {
-                    webViewRPCHandler.invokeRemoteMethod('onCollapseTree', [], (response) => {
+                    webViewRPCHandler.invokeRemoteMethod('onCollapseTree', [expandNode], (response) => {
                         resolve(response);
                     });
                 })
             }
 
-            function collapseTree(nodeID){
-                console.log("From renderer: collapse tree has been invoked for id ", nodeID);
-                ballerinaComposer.renderSyntaxTree(collapseTree, expandNodes, document.getElementById("treeBody"));
-            }
-
             function initiateRendering(){
-                console.log("The initiator is being called");
                 ballerinaComposer.renderSyntaxTree(collapseTree, renderTree, document.getElementById("treeBody"));
             }
 
