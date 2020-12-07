@@ -1,6 +1,6 @@
 import { treeMapper } from "./treeMapper";
 import { TreeNode, layoutOptions } from "./resources";
-import { findChildren } from "./updateGraph";
+import { updateTreeGraph } from "./updateGraph";
 
 export let nodeMembers: any[], nodeEdges: any[], nodeArray: TreeNode[];
 
@@ -11,9 +11,9 @@ export function retrieveGraph (responseTree: JSON){
     return setGraph();
 }
 
-export function updateGraph (nodeID: string){
+export function updateSyntaxTree (nodeID: string){
     nodeEdges = []; nodeMembers = [];
-    findChildren(nodeArray, nodeID);
+    updateTreeGraph(nodeArray, nodeID);
     return setGraph();
 }
 

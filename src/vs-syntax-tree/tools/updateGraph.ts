@@ -2,7 +2,7 @@ import { toInteger } from "lodash";
 import { TreeNode } from "./resources";
 import { nodeMembers, nodeEdges } from "./graphGenerator";
 
-export function findChildren(targetArray: TreeNode[], nodeID: string) {
+export function updateTreeGraph(targetArray: TreeNode[], nodeID: string) {
     for (let i = 0; i < targetArray.length; i++) {
         if (targetArray[i].nodeID === nodeID) {
             let status = targetArray[i].didCollapse;
@@ -14,7 +14,7 @@ export function findChildren(targetArray: TreeNode[], nodeID: string) {
         }
 
         if (targetArray[i].didCollapse === true) {
-            findChildren(targetArray[i].children, nodeID);
+            updateTreeGraph(targetArray[i].children, nodeID);
         }
 
         nodeMembers.push({
