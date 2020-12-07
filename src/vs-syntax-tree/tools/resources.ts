@@ -4,6 +4,7 @@ export interface TreeNode {
     kind: string;
     type: string;
     parentID: string;
+    didCollapse: boolean;
     children: TreeNode[];
 }
 
@@ -13,4 +14,4 @@ export const layoutOptions = {
     'elk.layered.crossingMinimization.semiInteractive': 'true',
     'elk.edgeRouting': 'POLYLINE',
     'elk.layered.mergeEdges': 'true'
-}
+};

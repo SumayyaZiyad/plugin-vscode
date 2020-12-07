@@ -13,8 +13,7 @@ export function treeMapper(obj: JSON, parentObj: TreeNode | any, nodeKind: strin
                     value: obj[props].value,
                     kind: obj[props].kind,
                     type: props,
-                    parentID: parentObj.nodeID,
-                    children: []
+                    parentID: parentObj.nodeID
                 });
                 ++nodeCount;
             }
@@ -34,6 +33,7 @@ export function treeMapper(obj: JSON, parentObj: TreeNode | any, nodeKind: strin
                         kind: nodeKind,
                         type: props,
                         parentID: parentObj.nodeID,
+                        didCollapse: false,
                         children: []
                     };
 
@@ -55,6 +55,7 @@ export function treeMapper(obj: JSON, parentObj: TreeNode | any, nodeKind: strin
                 kind: obj[props],
                 type: obj[props],
                 parentID: parentObj.nodeID,
+                didCollapse: false,
                 children: []
             };
 
@@ -72,6 +73,10 @@ function graphMapper (array: TreeNode[], graphNodes: any[], graphEdges: any[], l
     for (let i=0; i < array.length && level <3 ; i++){
         let node : any = array[i].nodeID;
         let position : any = (node.match(/\d/g)).join("");
+        array[i] = {
+            ...array[i],
+            didCollapse: level === 2 ? false : true
+        };
 
         graphNodes.push({
             id: array[i].nodeID,

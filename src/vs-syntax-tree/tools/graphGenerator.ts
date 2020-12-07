@@ -10,12 +10,14 @@ export function retrieveGraph (responseTree: JSON){
     const retrievedMap = treeMapper(responseTree, {}, 'root');
     nodeMembers = retrievedMap[0]; nodeEdges = retrievedMap[1];
 
+    console.log("%%%%%%%%%%%%%", nodeArray);
     return setGraph();
 }
 
 export function updateGraph (nodeID: string){
     let intID : number = toInteger(nodeID.replace(/\D/g, ''));
     findChildren(nodeArray, intID);
+    console.log(nodeArray);
     return setGraph();
 }
 

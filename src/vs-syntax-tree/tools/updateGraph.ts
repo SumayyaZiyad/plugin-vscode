@@ -7,6 +7,10 @@ export function findChildren(targetArray: TreeNode[], nodeID: number) {
         let currentNodeID = toInteger(targetArray[i].nodeID.replace(/\D/g, ''));
 
         if (currentNodeID === nodeID) {
+            targetArray[i] = {
+                ...targetArray[i],
+                didCollapse: true
+            };
             return expandNode(targetArray[i].children);
         }
 
