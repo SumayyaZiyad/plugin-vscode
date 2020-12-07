@@ -1,4 +1,3 @@
-import { toInteger } from "lodash";
 import { treeMapper } from "./treeMapper";
 import { TreeNode, layoutOptions } from "./resources";
 import { findChildren } from "./updateGraph";
@@ -9,15 +8,12 @@ export function retrieveGraph (responseTree: JSON){
     nodeArray = [];
     const retrievedMap = treeMapper(responseTree, {}, 'root');
     nodeMembers = retrievedMap[0]; nodeEdges = retrievedMap[1];
-
-    console.log("%%%%%%%%%%%%%", nodeArray);
     return setGraph();
 }
 
 export function updateGraph (nodeID: string){
-    let intID : number = toInteger(nodeID.replace(/\D/g, ''));
-    findChildren(nodeArray, intID);
-    console.log(nodeArray);
+    nodeEdges = []; nodeMembers = [];
+    findChildren(nodeArray, nodeID);
     return setGraph();
 }
 

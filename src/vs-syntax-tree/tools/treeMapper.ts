@@ -13,7 +13,8 @@ export function treeMapper(obj: JSON, parentObj: TreeNode | any, nodeKind: strin
                     value: obj[props].value,
                     kind: obj[props].kind,
                     type: props,
-                    parentID: parentObj.nodeID
+                    parentID: parentObj.nodeID,
+                    children: []
                 });
                 ++nodeCount;
             }
