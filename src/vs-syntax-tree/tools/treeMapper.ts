@@ -88,7 +88,8 @@ function graphMapper (array: TreeNode[], graphNodes: any[], graphEdges: any[], l
                 'elk.position': '('+(toInteger(position))+', 0)'
             },
             type: array[i].type,
-            kind: array[i].kind
+            kind: array[i].kind,
+            ifParent: array[i].children.length > 0 ? true : false
         });
 
         if(array[i].value !== "syntaxTree"){

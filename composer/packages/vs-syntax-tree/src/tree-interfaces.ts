@@ -19,6 +19,7 @@ export interface Node {
     label: string;
     type: string;
     kind: string;
+    ifParent: boolean;
 }
 
 export interface TreeEdge {

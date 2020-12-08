@@ -5,6 +5,7 @@ export interface TreeNode {
     type: string;
     parentID: string;
     didCollapse: boolean;
+    ifParent: boolean;
     children: TreeNode[];
 }
 

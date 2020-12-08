@@ -10,7 +10,7 @@ function TreeNode(props: TreeNodeProps) {
     return (
         <div
             style={{
-                backgroundColor: props.node.id.includes("c") ? "blue" : "green",
+                backgroundColor: props.node.ifParent ? "green" : "blue",
                 borderRadius: 10,
                 color: "white",
                 height: 50,
@@ -21,7 +21,7 @@ function TreeNode(props: TreeNodeProps) {
                 top: props.node.y,
                 width: 150
             }}
-            onClick={props.onCollapseTree}
+            onClick = {props.node.ifParent ? props.onCollapseTree : () => {}}
         >
             {props.node.label}
         </div>

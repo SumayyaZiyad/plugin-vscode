@@ -22,7 +22,8 @@ export function updateTreeGraph(targetArray: TreeNode[], nodeID: string) {
                 'elk.position': `(${toInteger(targetArray[i].nodeID.replace(/\D/g, ''))}, 0)`
             },
             type: targetArray[i].type,
-            kind: targetArray[i].kind
+            kind: targetArray[i].kind,
+            ifParent: targetArray[i].children.length ? true : false
         });
 
         if(targetArray[i].value !== "syntaxTree"){
