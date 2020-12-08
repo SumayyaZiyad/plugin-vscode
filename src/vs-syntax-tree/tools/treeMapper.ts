@@ -38,7 +38,7 @@ export function treeMapper(obj: JSON, parentObj: TreeNode | any, nodeKind: strin
                         children: []
                     };
 
-                    nodeArray.length < 1 ? nodeArray.push(childNode) : parentObj.children.push(childNode);
+                    nodeArray.length ? parentObj.children.push(childNode) : nodeArray.push(childNode);
                     ++nodeCount;
                 }
                 treeMapper(obj[props], childNode, nodeKind);
@@ -89,7 +89,7 @@ function graphMapper (array: TreeNode[], graphNodes: any[], graphEdges: any[], l
             },
             type: array[i].type,
             kind: array[i].kind,
-            ifParent: array[i].children.length > 0 ? true : false
+            ifParent: array[i].children.length ? true : false
         });
 
         if(array[i].value !== "syntaxTree"){
@@ -100,7 +100,7 @@ function graphMapper (array: TreeNode[], graphNodes: any[], graphEdges: any[], l
             });
         }
         
-        if(array[i].children.length > 0){
+        if(array[i].children.length){
             graphMapper(array[i].children, graphNodes, graphEdges, ++level);
             --level;
         }

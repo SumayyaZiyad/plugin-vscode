@@ -31,7 +31,7 @@ function validateForVisualization(context: vscode.ExtensionContext, langClient: 
 }
 
 function visualizeSyntaxTree(context: vscode.ExtensionContext, langClient: ExtendedLangClient, sourceRoot: string){    
-    vscode.workspace.onDidSaveTextDocument(() => {
+    vscode.workspace.onDidChangeTextDocument(() => {
         if (syntaxTreePanel){
             syntaxTreePanel.webview.postMessage({
                 command: 'update',
