@@ -17,6 +17,8 @@ export interface Node {
     x: number;
     y: number;
     label: string;
+    type: string;
+    kind: string;
 }
 
 export interface TreeEdge {

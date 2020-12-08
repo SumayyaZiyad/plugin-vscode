@@ -67,14 +67,12 @@ function createSyntaxTreePanel(context: vscode.ExtensionContext, langClient: Ext
                 return elk.layout(response);
             }
         },
-
         {
             methodName: "fetchSyntaxTree",
             handler: (args: any[]): Thenable<any> => {
                 return langClient.getSyntaxTree(vscode.Uri.file(args[0]));
             }
         },
-
         {
             methodName: "onCollapseTree",
             handler: (args: any[]): Thenable<any> => {
@@ -85,7 +83,6 @@ function createSyntaxTreePanel(context: vscode.ExtensionContext, langClient: Ext
     ];
 
     WebViewRPCHandler.create(syntaxTreePanel, langClient, remoteMethods);
-
     const displayHtml = render(context, langClient, sourceRoot);
     syntaxTreePanel.webview.html = displayHtml;
 }

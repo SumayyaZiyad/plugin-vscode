@@ -6,7 +6,7 @@ export let nodeMembers: any[], nodeEdges: any[], nodeArray: TreeNode[];
 
 export function retrieveGraph (responseTree: JSON){
     nodeArray = [];
-    const retrievedMap = treeMapper(responseTree, {}, 'root');
+    const retrievedMap = treeMapper(responseTree, {}, 'Tree Root');
     nodeMembers = retrievedMap[0]; nodeEdges = retrievedMap[1];
     return setGraph();
 }

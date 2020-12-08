@@ -13,10 +13,6 @@ export function updateTreeGraph(targetArray: TreeNode[], nodeID: string) {
             };
         }
 
-        if (targetArray[i].didCollapse === true) {
-            updateTreeGraph(targetArray[i].children, nodeID);
-        }
-
         nodeMembers.push({
             id: targetArray[i].nodeID,
             width: 150,
@@ -25,7 +21,8 @@ export function updateTreeGraph(targetArray: TreeNode[], nodeID: string) {
             layoutOptions: { 
                 'elk.position': `(${toInteger(targetArray[i].nodeID.replace(/\D/g, ''))}, 0)`
             },
-            parentID: targetArray[i].parentID
+            type: targetArray[i].type,
+            kind: targetArray[i].kind
         });
 
         if(targetArray[i].value !== "syntaxTree"){
@@ -34,6 +31,10 @@ export function updateTreeGraph(targetArray: TreeNode[], nodeID: string) {
                 sources: [targetArray[i].parentID],
                 targets: [targetArray[i].nodeID]
             });
+        }
+
+        if (targetArray[i].didCollapse === true) {
+            updateTreeGraph(targetArray[i].children, nodeID);
         }
     }
 }

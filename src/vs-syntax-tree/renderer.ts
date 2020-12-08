@@ -13,7 +13,7 @@ export function render(context: ExtensionContext, langClient: ExtendedLangClient
     const scripts = `
         function loadedScript() {
             let docUri = ${JSON.stringify(sourceRoot)};
-            let expandNode = "";
+            let collapsedNode = "";
 
             window.addEventListener('message', event => {
                 let msg = event.data;
@@ -35,13 +35,13 @@ export function render(context: ExtensionContext, langClient: ExtendedLangClient
             }
 
             function collapseTree(nodeID){
-                expandNode = nodeID;
-                ballerinaComposer.renderSyntaxTree(collapseTree, expandNodes, document.getElementById("treeBody"));
+                collapsedNode = nodeID;
+                ballerinaComposer.renderSyntaxTree(collapseTree, collapseNodes, document.getElementById("treeBody"));
             }
 
-            function expandNodes(){
+            function collapseNodes(){
                 return new Promise((resolve, reject) => {
-                    webViewRPCHandler.invokeRemoteMethod('onCollapseTree', [expandNode], (response) => {
+                    webViewRPCHandler.invokeRemoteMethod('onCollapseTree', [collapsedNode], (response) => {
                         resolve(response);
                     });
                 })
