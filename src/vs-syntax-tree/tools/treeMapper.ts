@@ -2,7 +2,7 @@ import { toInteger } from "lodash";
 import { nodeArray } from "./graphGenerator";
 import { TreeNode } from "./resources";
 
-let nodeCount = 0, rootLevel = 0;
+let nodeCount = 0, rootLevel = 0, childNode: any;
 
 export function treeMapper(obj: JSON, parentObj: TreeNode | any, nodeKind: string) {
     for (var props in obj) {
@@ -20,7 +20,7 @@ export function treeMapper(obj: JSON, parentObj: TreeNode | any, nodeKind: strin
             }
 
             else if (props.match(/^[0-9]+$/) === null && typeof obj[props] === "object") {
-                let childNode = parentObj;
+                childNode = parentObj;
 
                 if (!obj[props].nodeID) {
                     obj[props] = {
@@ -45,25 +45,24 @@ export function treeMapper(obj: JSON, parentObj: TreeNode | any, nodeKind: strin
             }
 
             else {
+                if(obj[props].kind){
+                    childNode = {
+                        nodeID: `p${nodeCount}`,
+                        value: obj[props].kind,
+                        kind: obj[props].kind,
+                        type: obj[props].kind,
+                        parentID: parentObj.nodeID,
+                        didCollapse: false,
+                        children: []
+                    };
+        
+                    parentObj.children.push(childNode);
+                    ++nodeCount;
+                    parentObj = childNode;
+                    nodeKind = obj[props];
+                }
                 treeMapper(obj[props], parentObj, nodeKind);
             }
-        }
-
-        else if (props === "kind") {
-            let childNode = {
-                nodeID: `p${nodeCount}`,
-                value: obj[props],
-                kind: obj[props],
-                type: obj[props],
-                parentID: parentObj.nodeID,
-                didCollapse: false,
-                children: []
-            };
-
-            parentObj.children.push(childNode);
-            ++nodeCount;
-            parentObj = childNode;
-            nodeKind = obj[props];
         }
     }
 

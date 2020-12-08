@@ -35,7 +35,6 @@ export function render(context: ExtensionContext, langClient: ExtendedLangClient
             }
 
             function collapseTree(nodeID){
-                console.log("HITTT");
                 collapsedNode = nodeID;
                 ballerinaComposer.renderSyntaxTree(collapseTree, collapseNodes, document.getElementById("treeBody"));
             }
