@@ -44,23 +44,23 @@ export function treeMapper(obj: JSON, parentObj: TreeNode | any, nodeKind: strin
                 treeMapper(obj[props], childNode, nodeKind);
             }
 
-            else {
-                if(obj[props].kind){
-                    childNode = {
-                        nodeID: `p${nodeCount}`,
-                        value: obj[props].kind,
-                        kind: obj[props].kind,
-                        type: obj[props].kind,
-                        parentID: parentObj.nodeID,
-                        didCollapse: false,
-                        children: []
-                    };
-        
-                    parentObj.children.push(childNode);
-                    ++nodeCount;
-                    parentObj = childNode;
-                    nodeKind = obj[props];
-                }
+            else if(obj[props].kind){
+                childNode = {
+                    nodeID: `p${nodeCount}`,
+                    value: obj[props].kind,
+                    kind: obj[props].kind,
+                    type: obj[props].kind,
+                    parentID: parentObj.nodeID,
+                    didCollapse: false,
+                    children: []
+                };
+    
+                parentObj.children.push(childNode);
+                ++nodeCount;
+                treeMapper(obj[props], childNode, obj[props]);
+            }
+
+            else{
                 treeMapper(obj[props], parentObj, nodeKind);
             }
         }
