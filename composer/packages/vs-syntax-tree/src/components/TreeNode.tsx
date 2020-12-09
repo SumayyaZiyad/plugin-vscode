@@ -10,7 +10,7 @@ function TreeNode(props: TreeNodeProps) {
     return (
         <div
             style={{
-                backgroundColor: props.node.ifParent ? "green" : "blue",
+                backgroundColor: props.node.ifParent ? "#16B16F" : "#6640D1",
                 borderRadius: 10,
                 color: "white",
                 height: 50,

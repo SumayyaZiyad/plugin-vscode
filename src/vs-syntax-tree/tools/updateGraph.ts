@@ -4,9 +4,10 @@ import { nodeMembers, nodeEdges } from "./graphGenerator";
 
 export function updateTreeGraph(targetArray: TreeNode[], nodeID: string) {
     for (let i = 0; i < targetArray.length; i++) {
+        let position = toInteger(targetArray[i].nodeID.replace(/\D/g, ''));
+
         if (targetArray[i].nodeID === nodeID) {
             let status = targetArray[i].didCollapse;
-
             targetArray[i] = {
                 ...targetArray[i],
                 didCollapse: !status
@@ -17,9 +18,9 @@ export function updateTreeGraph(targetArray: TreeNode[], nodeID: string) {
             id: targetArray[i].nodeID,
             width: 150,
             height: 50,
-            label: targetArray[i].value,
+            label: position > 0 ? targetArray[i].value : "Syntax Tree",
             layoutOptions: { 
-                'elk.position': `(${toInteger(targetArray[i].nodeID.replace(/\D/g, ''))}, 0)`
+                'elk.position': '('+position+', 0)'
             },
             type: targetArray[i].type,
             kind: targetArray[i].kind,

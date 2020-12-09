@@ -82,7 +82,7 @@ function graphMapper (array: TreeNode[], graphNodes: any[], graphEdges: any[], l
             id: array[i].nodeID,
             width: 150,
             height: 50,
-            label: array[i].value,
+            label: position > 0 ? array[i].value : "Syntax Tree",
             layoutOptions: { 
                 'elk.position': '('+(toInteger(position))+', 0)'
             },

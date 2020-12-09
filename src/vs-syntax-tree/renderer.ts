@@ -6,10 +6,23 @@ export function render(context: ExtensionContext, langClient: ExtendedLangClient
     : string {
 
     const body = `
-            <div id="treeBody" />
+            <div class="container">
+                <div id="treeBody" />
+            </div>
     `;
     const bodyCss = ``;
-    const styles = ``;
+    const styles = `
+        .container {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            margin-top: 1%;
+        }
+
+        #treeBody {
+            position: absolute;
+        }
+    `;
     const scripts = `
         function loadedScript() {
             let docUri = ${JSON.stringify(sourceRoot)};
