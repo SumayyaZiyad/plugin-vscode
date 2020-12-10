@@ -13,14 +13,9 @@ export function render(context: ExtensionContext, langClient: ExtendedLangClient
     const bodyCss = ``;
     const styles = `
         .container {
+            overflow-x: auto;
             position: relative;
-            display: flex;
-            justify-content: center;
-            margin-top: 1%;
-        }
-
-        #treeBody {
-            position: absolute;
+            height: 100%;
         }
     `;
     const scripts = `

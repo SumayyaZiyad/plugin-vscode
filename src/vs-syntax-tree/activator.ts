@@ -74,8 +74,8 @@ function createSyntaxTreePanel(context: vscode.ExtensionContext, langClient: Ext
         {
             methodName: "onCollapseTree",
             handler: (args: any[]): Thenable<any> => {
-                const resp = updateSyntaxTree(args[0]);
-                return elk.layout(resp);
+                const response = updateSyntaxTree(args[0]);
+                return elk.layout(response);
             }
         }
     ];

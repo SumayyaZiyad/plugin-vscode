@@ -80,7 +80,7 @@ function graphMapper (array: TreeNode[], graphNodes: any[], graphEdges: any[], l
 
         graphNodes.push({
             id: array[i].nodeID,
-            width: 150,
+            width: Math.max((array[i].value.length*9), 90),
             height: 50,
             label: position > 0 ? array[i].value : "Syntax Tree",
             layoutOptions: { 

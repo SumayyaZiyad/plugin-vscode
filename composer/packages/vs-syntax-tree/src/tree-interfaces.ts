@@ -20,6 +20,8 @@ export interface Node {
     type: string;
     kind: string;
     ifParent: boolean;
+    width: number;
+    height: number;
 }
 
 export interface TreeEdge {

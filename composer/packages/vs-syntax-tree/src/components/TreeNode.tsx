@@ -13,13 +13,14 @@ function TreeNode(props: TreeNodeProps) {
                 backgroundColor: props.node.ifParent ? "#16B16F" : "#6640D1",
                 borderRadius: 10,
                 color: "white",
-                height: 50,
+                fontSize: 14,
+                height: props.node.height,
                 left: props.node.x,
                 lineHeight: "50px",
                 position: "absolute",
                 textAlign: "center",
                 top: props.node.y,
-                width: 150
+                width: props.node.width
             }}
             onClick = {props.node.ifParent ? props.onCollapseTree : () => {}}
         >
