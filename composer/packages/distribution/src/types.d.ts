@@ -1,3 +1,3 @@
 declare module '@ballerina/documentation' {
-    export function renderDocPreview(ast: any, el: any): void;
+    export function renderDocPreview(html: any, nodeType: any, el: any): void;
 }

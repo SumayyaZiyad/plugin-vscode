@@ -1,0 +1,11 @@
+.url-link {
+  visibility: hidden;
+}
+
+.breadcrumb-home {
+  visibility: hidden;
+}
+
+body .content-wrapper .method-content .main-method-title:hover a.url-link {
+  visibility: hidden !important;
+}

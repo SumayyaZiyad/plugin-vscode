@@ -2,7 +2,7 @@
     "name": "ballerina",
     "displayName": "Ballerina",
     "description": "Language Intelligence, Diagram View, Debugging, code formatting and refactoring for Ballerina",
-    "version": "2.0.0-Preview6-SNAPSHOT",
+    "version": "2.0.0-Preview7",
     "publisher": "ballerina",
     "repository": {
         "type": "git",
@@ -29,14 +29,6 @@
         "onCommand:ballerina.visualizeSyntaxTree"
     ],
     "contributes": {
-        "views": {
-            "explorer": [
-                {
-                    "id": "ballerinaProjectTree",
-                    "name": "Ballerina Project Overview"
-                }
-            ]
-        },
         "languages": [
             {
                 "id": "ballerina",
@@ -120,6 +112,10 @@
                     "type": "string",
                     "default": "https://datamapper.choreo.dev",
                     "description": "URL of the host for data mapper back end"
+                },
+                "codelens-docs.enableCodeLens": {
+                    "type": "boolean",
+                    "default": true
                 }
             }
         },
@@ -240,6 +236,11 @@
                 "category": "Ballerina"
             },
             {
+                "command": "ballerina.project.doc",
+                "title": "API Documentation",
+                "category": "Ballerina"
+            },
+            {
                 "command": "ballerina.highlightSyntax",
                 "title": "Syntax Highlight",
                 "category": "Ballerina"
@@ -257,16 +258,7 @@
                 "title": "Syntax Tree Visualizer",
                 "category": "Ballerina"
             }
-        ],
-        "menus": {
-            "view/title": [
-                {
-                    "command": "ballerina.refreshProjectTree",
-                    "when": "view == ballerinaProjectTree",
-                    "group": "navigation"
-                }
-            ]
-        }
+        ]
     },
     "main": "./dist/extension",
     "scripts": {
@@ -286,6 +278,7 @@
         "@types/js-base64": "^2.3.1",
         "cross-env": "^5.2.0",
         "elkjs": "^0.7.0",
+        "dom-parser": "^0.1.6",
         "glob": "^7.1.3",
         "js-base64": "^2.5.1",
         "lodash": "^4.17.11",
@@ -300,6 +293,7 @@
     },
     "devDependencies": {
         "@types/chai": "^4.1.6",
+        "@types/dom-parser": "^0.1.0",
         "@types/glob": "^7.1.1",
         "@types/lodash": "^4.14.123",
         "@types/mocha": "^2.2.42",

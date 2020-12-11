@@ -16,72 +16,39 @@
  * under the License.
  *
  */
-import {
-	workspace, commands, window, Uri, ViewColumn,
-	ExtensionContext, TextEditor, WebviewPanel, TextDocumentChangeEvent
-} from 'vscode';
+import { commands, window, ViewColumn, ExtensionContext, WebviewPanel } from 'vscode';
 import * as _ from 'lodash';
 import { render } from './renderer';
-import { BallerinaAST, ExtendedLangClient } from '../core/extended-language-client';
+import { ExtendedLangClient } from '../core/extended-language-client';
 import { BallerinaExtension } from '../core';
 import { getCommonWebViewOptions } from '../utils';
 import { TM_EVENT_OPEN_DOC_PREVIEW, CMP_DOCS_PREVIEW } from '../telemetry';
-
-const DEBOUNCE_WAIT = 500;
+import * as path from 'path';
+import { getCurrentBallerinaProject } from "../utils/project-utils";
+import { runCommandOnBackground, BALLERINA_COMMANDS } from '../project/cli-cmds/cmd-runner';
+// import DOMParser = require('dom-parser');
+import * as fs from "fs";
 
 let previewPanel: WebviewPanel | undefined;
-let activeEditor: TextEditor | undefined;
 
-function updateWebView(ast: BallerinaAST, docUri: Uri): void {
+// function updateWebView(docHtml: string, nodeType: string): void {
+// 	if (previewPanel) {
+// 		previewPanel.webview.postMessage({
+// 			command: 'update',
+// 			docHtml: docHtml,
+// 			nodeType: nodeType
+// 		});
+// 	}
+// }
+
+function showDocs(context: ExtensionContext, langClient: ExtendedLangClient, args: any): void {
 	if (previewPanel) {
-		previewPanel.webview.postMessage({
-			command: 'update',
-			json: ast,
-			docUri: docUri.toString()
-		});
+		previewPanel.dispose();
 	}
-}
 
-function showDocs(context: ExtensionContext, langClient: ExtendedLangClient, nodeName: string): void {
-	const didChangeDisposable = workspace.onDidChangeTextDocument(
-		_.debounce((e: TextDocumentChangeEvent) => {
-			if (activeEditor && (e.document === activeEditor.document) &&
-				e.document.fileName.endsWith('.bal')) {
-				const docUri = e.document.uri;
-				langClient.getAST(docUri)
-					.then((resp) => {
-						if (resp.ast) {
-							updateWebView(resp.ast, docUri);
-						}
-					});
-			}
-		}, DEBOUNCE_WAIT));
-
-	const changeActiveEditorDisposable = window.onDidChangeActiveTextEditor(
-		(activatedEditor: TextEditor | undefined) => {
-			if (window.activeTextEditor && activatedEditor
-				&& (activatedEditor.document === window.activeTextEditor.document)
-				&& activatedEditor.document.fileName.endsWith('.bal')) {
-				activeEditor = window.activeTextEditor;
-				const docUri = activatedEditor.document.uri;
-				langClient.getAST(docUri)
-					.then((resp) => {
-						if (resp.ast) {
-							updateWebView(resp.ast, docUri);
-						}
-					});
-			}
-		});
-
-	if (previewPanel) {
-		previewPanel.reveal(ViewColumn.Two, true);
-		scrollToTitle(previewPanel, nodeName);
-		return;
-	}
-	// Create and show a new webview
 	previewPanel = window.createWebviewPanel(
 		'ballerinaDocs',
-		"Ballerina Docs",
+		"Documentation Preview",
 		{ viewColumn: ViewColumn.Two, preserveFocus: true },
 		getCommonWebViewOptions()
 	);
@@ -89,53 +56,84 @@ function showDocs(context: ExtensionContext, langClient: ExtendedLangClient, nod
 	if (!editor) {
 		return;
 	}
-	activeEditor = editor;
 
 	const html = render(context, langClient);
-	
 	if (previewPanel && html) {
 		previewPanel.webview.html = html;
 	}
 
-	const disposeLoaded = previewPanel.webview.onDidReceiveMessage((e) => {
+	const disposeLoaded = previewPanel.webview.onDidReceiveMessage(async (e) => {
 		if (e.message !== "loaded-doc-preview") {
 			return;
 		}
 		disposeLoaded.dispose();
-		langClient.getAST(editor.document.uri)
-		.then((resp) => {
-			if (resp.ast) {
-				updateWebView(resp.ast, editor.document.uri);
-				if (previewPanel) {
-					scrollToTitle(previewPanel, nodeName);
-				}
-			}
+
+		const currentProject = await getCurrentBallerinaProject();
+		if (!currentProject) {
+			window.showErrorMessage(`Open editor ${editor.document.uri} does not reside inside a Ballerina project.`);
+			return;
+		}
+
+		let htmlFilePath;
+		if (args.nodeType === 'functions') {
+			htmlFilePath = path.join(currentProject.path!, 'target', 'apidocs', args.moduleName,
+				`${args.nodeType}.html`);
+		} else {
+			htmlFilePath = path.join(currentProject.path!, 'target', 'apidocs', args.moduleName,
+				args.nodeType, `${args.nodeName}.html`);
+		}
+
+		fs.watchFile(htmlFilePath, () => {
+			extractHTMLToRender(htmlFilePath, args);
+			fs.unwatchFile(htmlFilePath);
 		});
+
+		const result = runCommandOnBackground(currentProject, BALLERINA_COMMANDS.DOC, args.moduleName);
+		if (!result) {
+			window.showErrorMessage(`Error while generating docs for ${args.moduleName} module.`);
+			return;
+		}
 	});
 
 	previewPanel.onDidDispose(() => {
 		previewPanel = undefined;
-		didChangeDisposable.dispose();
-		changeActiveEditorDisposable.dispose();
 	});
+}
+
+async function extractHTMLToRender(htmlFilePath: string, args: any) {
+	// const docsPathOnWorkspace = Uri.file(htmlFilePath);
+	// let doc = await workspace.openTextDocument(docsPathOnWorkspace);
+	// const parser = new DOMParser();
+	// const dom = parser.parseFromString(doc.getText());
+	// let elementToRender;
+	// if (args.nodeType === 'functions') {
+	// 	const elements: DOMParser.Node[] | null = dom.getElementsByClassName('method-content');
+	// 	if (elements) {
+	// 		for (let index = 0; index < elements.length; index++) {
+	// 			const urlLinks: DOMParser.Node[] | null = elements[index].getElementsByClassName('url-link');
+	// 			if (urlLinks && urlLinks[0].getAttribute('href') === `#${args.nodeName}`) {
+	// 				elementToRender = elements[index];
+	// 				break;
+	// 			}
+	// 		}
+	// 	}
+	// } else {
+	// 	elementToRender = dom.getElementById('main');
+	// }
+
+	// // update doc preview web view
+	// updateWebView(elementToRender.innerHTML, args.nodeType);
 }
 
 export function activate(ballerinaExtInstance: BallerinaExtension) {
 	const reporter = ballerinaExtInstance.telemetryReporter;
 	const context = <ExtensionContext>ballerinaExtInstance.context;
 	const langClient = <ExtendedLangClient>ballerinaExtInstance.langClient;
-	const docsRenderDisposable = commands.registerCommand('ballerina.showDocs', nodeNameArg => {
+	const docsRenderDisposable = commands.registerCommand('ballerina.showDocs', (args: any) => {
 		reporter.sendTelemetryEvent(TM_EVENT_OPEN_DOC_PREVIEW, { component: CMP_DOCS_PREVIEW });
 		return ballerinaExtInstance.onReady()
 			.then(() => {
-				const { experimental } = langClient.initializeResult!.capabilities;
-				const serverProvidesAST = experimental && experimental.astProvider;
-
-				if (!serverProvidesAST) {
-					ballerinaExtInstance.showMessageServerMissingCapability();
-					return {};
-				}
-				showDocs(context, langClient, (nodeNameArg) ? nodeNameArg.argumentV : "");				
+				showDocs(context, langClient, args);
 			})
 			.catch((e) => {
 				if (!ballerinaExtInstance.isValidBallerinaHome()) {
@@ -148,13 +146,4 @@ export function activate(ballerinaExtInstance: BallerinaExtension) {
 	});
 
 	context.subscriptions.push(docsRenderDisposable);
-}
-
-function scrollToTitle(previewPanel:WebviewPanel, anchorId: string){
-	if (previewPanel && anchorId) {
-		previewPanel.webview.postMessage({
-			command: 'scroll',
-			anchor: anchorId
-		});
-	}
 }

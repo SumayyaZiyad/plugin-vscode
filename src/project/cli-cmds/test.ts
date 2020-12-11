@@ -2,7 +2,7 @@ import { ballerinaExtInstance } from "../../core";
 import { commands, window } from "vscode";
 import { TM_EVENT_RUN_PROJECT_TESTS, CMP_PROJECT_TEST_RUNNER } from "../../telemetry";
 import { runCommand, BALLERINA_COMMANDS } from "./cmd-runner";
-import { getCurrentBallerinaProject, getCurrentBallerinaFile, getCurrenDirectoryPath } from "./utils";
+import { getCurrentBallerinaProject, getCurrentBallerinaFile, getCurrenDirectoryPath } from "../../utils/project-utils";
 
 export function activateTestRunner() {
     const reporter = ballerinaExtInstance.telemetryReporter;

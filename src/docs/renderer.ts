@@ -1,6 +1,6 @@
 import { ExtendedLangClient } from '../core/extended-language-client';
 import { ExtensionContext } from 'vscode';
-import { getLibraryWebViewContent, WebViewOptions, getComposerWebViewOptions } from '../utils';
+import { getLibraryWebViewContent, WebViewOptions, getComposerWebViewOptionsForDocView } from '../utils';
 
 export function render(context: ExtensionContext, langClient: ExtendedLangClient)
     : string {
@@ -17,9 +17,10 @@ export function render(context: ExtensionContext, langClient: ExtendedLangClient
         window.addEventListener('message', event => {
             switch (event.data.command) {
                 case 'update':
-                    const astJson = event.data.json;
+                    const docHtml = event.data.docHtml;
+                    const nodeType = event.data.nodeType;
                     if (window.ballerinaComposer) {
-                        ballerinaComposer.renderDocPreview(astJson, el);
+                        ballerinaComposer.renderDocPreview(docHtml, nodeType, el);
                     }
                     break;
                 case 'scroll':
@@ -35,9 +36,9 @@ export function render(context: ExtensionContext, langClient: ExtendedLangClient
     `;
 
     const webViewOptions: WebViewOptions = {
-        ...getComposerWebViewOptions(),
+        ...getComposerWebViewOptionsForDocView(),
         body, scripts, styles, bodyCss
     };
-    
+
     return getLibraryWebViewContent(webViewOptions);
 }

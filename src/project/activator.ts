@@ -4,6 +4,7 @@ import { TM_EVENT_OPEN_DETECTED_PROJECT_ROOT_VIA_PROMPT, CMP_PROJECT_SUPPORT } f
 import { activateTestRunner } from "./cli-cmds/test";
 import { activateBuildCommand } from "./cli-cmds/build";
 import { activateRunCommand } from "./cli-cmds/run";
+import { activateDocCommand } from "./cli-cmds/doc";
 
 function promptOpenFolder(path: string) {
     const reporter = ballerinaExtInstance.telemetryReporter;
@@ -51,4 +52,7 @@ export function activate(ballerinaExtInstance: BallerinaExtension) {
 
     // activate ballerina run command
     activateRunCommand();
+
+    // activate ballerina doc command
+    activateDocCommand();
 }

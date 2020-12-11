@@ -24,3 +24,6 @@ export const TM_EVENT_RUN_PROJECT_BUILD = "run.project.build";
 
 // event for executing the ballerina run command
 export const TM_EVENT_EXECUTE_BALLERINA_RUN = "execute.ballerina.run";
+
+// event for executing the ballerina doc command
+export const TM_EVENT_EXECUTE_BALLERINA_DOC = "execute.ballerina.doc";

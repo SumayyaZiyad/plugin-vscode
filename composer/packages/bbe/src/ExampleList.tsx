@@ -134,24 +134,30 @@ export class SamplesList extends React.Component<SamplesListProps, SamplesListSt
                         <Header as="h3" dividing>
                             Ballerina Examples
                         </Header>
-                        <Form>
-                            <Form.Field inline>
-                                <Input
-                                    ref={(ref) => {
-                                        this.searchInput = ref as Input;
-                                    }}
-                                    loading={!this.state || !this.state.samples}
-                                    placeholder="Search"
-                                    onChange={(event: React.SyntheticEvent<HTMLInputElement>) => {
-                                        this.setState({
-                                            searchQuery: event.currentTarget.value,
-                                        });
-                                        this.onSearchQueryEdit();
-                                    }}
-                                    className="search-control"
-                                />
-                            </Form.Field>
-                        </Form>
+                        {this.state && this.state.samples && this.state.samples.length > 0 ?
+                            (
+                                <Form>
+                                    <Form.Field inline>
+                                        <Input
+                                            ref={(ref) => {
+                                                this.searchInput = ref as Input;
+                                            }}
+                                            loading={!this.state || !this.state.samples}
+                                            placeholder="Search"
+                                            onChange={(event: React.SyntheticEvent<HTMLInputElement>) => {
+                                                this.setState({
+                                                    searchQuery: event.currentTarget.value,
+                                                });
+                                                this.onSearchQueryEdit();
+                                            }}
+                                            className="search-control"
+                                        />
+                                    </Form.Field>
+                                </Form>
+                            ) : (
+                                <>No Samples found in [BALLERINA_HOME]/examples folder.</>
+                            )
+                        }
                     </Grid.Column>
                 </Grid.Row>
                 <Grid.Row className="welcome-content-wrapper">

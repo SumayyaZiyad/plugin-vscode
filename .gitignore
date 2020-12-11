@@ -3,6 +3,9 @@ out
 node_modules
 .vscode-test/
 *.vsix
+!resources/jslibs/themes/doc-theme.css
+!resources/jslibs/themes/semantic.min.css
+!resources/jslibs/themes/styles.css
 resources/jslibs
 !.vscode
 coverage

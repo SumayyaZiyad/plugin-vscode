@@ -1,4 +1,4 @@
-import { BallerinaProject, ballerinaExtInstance } from "../../core";
+import { BallerinaProject, ballerinaExtInstance } from "../core";
 import { window } from "vscode";
 import * as path from 'path';
 

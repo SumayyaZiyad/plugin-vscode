@@ -12,7 +12,7 @@ export function renderSamplesList(target: HTMLElement,
         openLink,
         openSample,
     };
-    target.classList.add("composer-library");
+    target.classList.add("composer");
     const SamplesListElement = createElement(SamplesList, props);
     render(SamplesListElement, target);
 }
