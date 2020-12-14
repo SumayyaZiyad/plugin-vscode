@@ -19,6 +19,7 @@ export interface Node {
     label: string;
     type: string;
     kind: string;
+    nodeColor: string;
     ifParent: boolean;
     width: number;
     height: number;

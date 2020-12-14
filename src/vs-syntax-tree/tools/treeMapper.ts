@@ -6,47 +6,40 @@ let nodeCount = 0, rootLevel = 0, childNode: any;
 
 export function treeMapper(obj: JSON, parentObj: TreeNode | any, nodeKind: string) {
     for (var props in obj) {
-        if (typeof obj[props] === "object") {
+        if (props === "position"){
+            return obj[props];
+        }
+
+        else if (props !== "relativeResourcePath" && typeof obj[props] === "object") {
             if (obj[props].hasOwnProperty("kind" && "value" && "isToken")) {
                 parentObj.children.push({
-                    nodeID: `c${nodeCount}`,
+                    nodeID: `c${++nodeCount}`,
                     value: obj[props].value,
                     kind: obj[props].kind,
                     type: props,
                     parentID: parentObj.nodeID,
                     children: []
                 });
-                ++nodeCount;
             }
 
-            else if (props.match(/^[0-9]+$/) === null && typeof obj[props] === "object") {
-                childNode = parentObj;
+            else if (props.match(/^[0-9]+$/) === null) {
+                childNode = {
+                    nodeID: `p${++nodeCount}`,
+                    value: props,
+                    kind: nodeKind,
+                    type: props,
+                    parentID: parentObj.nodeID,
+                    didCollapse: false,
+                    children: []
+                };
 
-                if (!obj[props].nodeID) {
-                    obj[props] = {
-                        ...obj[props],
-                        nodeID: `p${nodeCount}`
-                    };
-
-                    childNode = {
-                        nodeID: obj[props].nodeID,
-                        value: props,
-                        kind: nodeKind,
-                        type: props,
-                        parentID: parentObj.nodeID,
-                        didCollapse: false,
-                        children: []
-                    };
-
-                    nodeArray.length ? parentObj.children.push(childNode) : nodeArray.push(childNode);
-                    ++nodeCount;
-                }
+                nodeArray.length ? parentObj.children.push(childNode) : nodeArray.push(childNode);
                 treeMapper(obj[props], childNode, nodeKind);
             }
 
             else if(obj[props].kind){
                 childNode = {
-                    nodeID: `p${nodeCount}`,
+                    nodeID: `p${++nodeCount}`,
                     value: obj[props].kind,
                     kind: obj[props].kind,
                     type: obj[props].kind,
@@ -56,7 +49,6 @@ export function treeMapper(obj: JSON, parentObj: TreeNode | any, nodeKind: strin
                 };
     
                 parentObj.children.push(childNode);
-                ++nodeCount;
                 treeMapper(obj[props], childNode, obj[props]);
             }
 
@@ -88,7 +80,8 @@ function graphMapper (array: TreeNode[], graphNodes: any[], graphEdges: any[], l
             },
             type: array[i].type,
             kind: array[i].kind,
-            ifParent: array[i].children.length ? true : false
+            ifParent: array[i].children.length ? true : false,
+            nodeColor: array[i].children.length ? "#16B16F" : "#6640D1"
         });
 
         if(array[i].value !== "syntaxTree"){

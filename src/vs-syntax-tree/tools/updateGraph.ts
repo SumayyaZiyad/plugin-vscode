@@ -24,7 +24,8 @@ export function updateTreeGraph(targetArray: TreeNode[], nodeID: string) {
             },
             type: targetArray[i].type,
             kind: targetArray[i].kind,
-            ifParent: targetArray[i].children.length ? true : false
+            ifParent: targetArray[i].children.length ? true : false,
+            nodeColor: targetArray[i].children.length ? "#16B16F" : "#6640D1"
         });
 
         if(targetArray[i].value !== "syntaxTree"){
