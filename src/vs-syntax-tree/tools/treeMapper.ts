@@ -2,7 +2,7 @@ import { toInteger } from "lodash";
 import { nodeArray } from "./graphGenerator";
 import { TreeNode } from "./resources";
 
-let nodeCount = 0, rootLevel = 0, childNode: any;
+let rootLevel = 0, childNode: any, nodeCount = -1;
 
 export function treeMapper(obj: JSON, parentObj: TreeNode | any, nodeKind: string) {
     for (var props in obj) {
@@ -18,7 +18,8 @@ export function treeMapper(obj: JSON, parentObj: TreeNode | any, nodeKind: strin
                     kind: obj[props].kind,
                     type: props,
                     parentID: parentObj.nodeID,
-                    children: []
+                    children: [],
+                    diagnostics: obj[props].typeData ? obj[props].typeData.diagnostics : []
                 });
             }
 
@@ -30,7 +31,8 @@ export function treeMapper(obj: JSON, parentObj: TreeNode | any, nodeKind: strin
                     type: props,
                     parentID: parentObj.nodeID,
                     didCollapse: false,
-                    children: []
+                    children: [],
+                    diagnostics: nodeArray.length ? (obj[props].typeData ? obj[props].typeData.diagnostics : []) : []
                 };
 
                 nodeArray.length ? parentObj.children.push(childNode) : nodeArray.push(childNode);
@@ -45,7 +47,8 @@ export function treeMapper(obj: JSON, parentObj: TreeNode | any, nodeKind: strin
                     type: obj[props].kind,
                     parentID: parentObj.nodeID,
                     didCollapse: false,
-                    children: []
+                    children: [],
+                    diagnostics: obj[props].typeData ? obj[props].typeData.diagnostics : []
                 };
     
                 parentObj.children.push(childNode);
@@ -74,17 +77,17 @@ function graphMapper (array: TreeNode[], graphNodes: any[], graphEdges: any[], l
             id: array[i].nodeID,
             width: Math.max((array[i].value.length*9), 90),
             height: 50,
-            label: position > 0 ? array[i].value : "Syntax Tree",
+            label: graphNodes.length ? array[i].value : "Syntax Tree",
             layoutOptions: { 
                 'elk.position': '('+(toInteger(position))+', 0)'
             },
             type: array[i].type,
             kind: array[i].kind,
             ifParent: array[i].children.length ? true : false,
-            nodeColor: array[i].children.length ? "#16B16F" : "#6640D1"
+            nodeColor: array[i].diagnostics.length ? "#DB3247" : (array[i].children.length ? "#16B16F" : "#6640D1")
         });
 
-        if(array[i].value !== "syntaxTree"){
+        if(graphNodes.length > 1){
             graphEdges.push({
                 id: `e${array[i].nodeID}`,
                 sources: [array[i].parentID],

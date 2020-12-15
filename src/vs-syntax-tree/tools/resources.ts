@@ -7,7 +7,7 @@ export interface TreeNode {
     didCollapse: boolean;
     ifParent: boolean;
     children: TreeNode[];
-    diagnostics?: any[];
+    diagnostics: any;
 }
 
 export const layoutOptions = {
