@@ -16,17 +16,39 @@ const noBalFileNode: ProjectTreeElement = {
     kind: 'Info',
 };
 
-interface ProjectAST {
-    [moduleName: string]: {
-        name: string;
-        compilationUnits: {
-            [compilationUnitName: string]: {
-                name: string;
-                ast: any;
-                uri: string;
-            };
-        };
+interface Packages {
+    [packages: number]: Package;
+}
+
+interface Package {
+    name: string;
+    modules: Module[];
+}
+
+interface Module {
+    name?: string;
+    default?: boolean;
+    functions: FunctionOrResource[];
+    services: Service[];
+}
+
+interface FunctionOrResource {
+    name: string;
+    filePath: string;
+    position: {
+        startLine: number;
+        startColumn: number;
     };
+}
+
+interface Service {
+    name: string;
+    filePath: string;
+    position: {
+        startLine: number;
+        startColumn: number;
+    };
+    resources: FunctionOrResource[];
 }
 
 const treeItemKinds = {
@@ -191,13 +213,13 @@ export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectTreeE
         return new Promise<any>((resolve) => {
             this.ballerinaExtInstance.onReady().then(() => {
                 if (!this.langClient) {
-                    resolve();
+                    resolve('Language Client is not initialized.');
                     return;
                 }
 
-                this.langClient.getProjectAST(vscode.Uri.file(sourceRoot).toString(true)).then((result: any) => {
-                    if (result.modules && (Object.keys(result.modules).length > 0)) {
-                        const balProjectTree = this.buildProjectTree(result.modules, sourceRoot);
+                this.langClient.getPackages(vscode.Uri.file(sourceRoot).toString(true)).then((result: any) => {
+                    if (result.packages && (Object.keys(result.packages).length > 0)) {
+                        const balProjectTree = this.buildProjectTree(result.packages, sourceRoot);
                         resolve(balProjectTree);
                     } else {
                         resolve([errorNode]);
@@ -211,72 +233,82 @@ export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectTreeE
         });
     }
 
-    private buildProjectTree(modules: ProjectAST, sourceRoot: string): ProjectTreeElement[] {
+    private buildProjectTree(packages: Packages, sourceRoot: string): ProjectTreeElement[] {
         const moduleElementList: ProjectTreeElement[] = [];
-        Object.keys(modules).forEach((moduleName) => {
-            const module = modules[moduleName];
-            const newModuleElement: ProjectTreeElement = {
-                sourceRoot,
+        const nonDefaultModuleElements: ProjectTreeElement[] = [];
+        Object.keys(packages[0].modules).forEach(moduleId => {
+            let filePath: string;
+            const moduleNode = packages[0].modules[moduleId];
+            let moduleName: string;
+            if (moduleNode.default) {
+                moduleName = packages[0].name;
+                filePath = `${sourceRoot}${path.sep}`;
+            } else {
+                moduleName = moduleNode.name;
+                filePath = `${sourceRoot}${path.sep}modules${path.sep}${moduleName}${path.sep}`;
+            }
+            const moduleElement: ProjectTreeElement = {
+                sourceRoot: sourceRoot,
                 name: moduleName,
                 kind: 'Module',
                 topLevelNodes: [],
             };
 
-            const newModuleTopLevelNodes: ProjectTreeElement[] = [];
-
-            Object.keys(module.compilationUnits).forEach((cUnitName) => {
-                const cUnit = module.compilationUnits[cUnitName];
-                const filePathValue = `${sourceRoot}${path.sep}src${path.sep}${moduleName}${path.sep}${cUnitName}`;
-                cUnit.ast.topLevelNodes.forEach((topLevelNode: any) => {
-                    if (topLevelNode.kind === 'Function') {
-                        newModuleTopLevelNodes.push({
-                            sourceRoot,
-                            name: topLevelNode.name.value,
-                            kind: 'Function',
-                            moduleName,
-                            filePath: filePathValue,
-                            startLine: topLevelNode.name.position.startLine,
-                            startColumn: topLevelNode.name.position.startColumn
-                        });
-                        return;
-                    }
-
-                    if (topLevelNode.kind === 'Service') {
-                        const serviceElement: ProjectTreeElement = {
-                            sourceRoot,
-                            name: topLevelNode.name.value,
-                            kind: 'Service',
-                            moduleName,
-                            filePath: filePathValue,
-                            startLine: topLevelNode.name.position.startLine,
-                            startColumn: topLevelNode.name.position.startColumn
-                        };
-
-                        serviceElement.resources = topLevelNode.resources.map((resource: any) => {
-                            return {
-                                sourceRoot,
-                                name: resource.name.value,
-                                kind: 'Resource',
-                                moduleName,
-                                serviceName: topLevelNode.name.value,
-                                filePath: filePathValue,
-                                startLine: topLevelNode.name.position.startLine,
-                                startColumn: topLevelNode.name.position.startColumn
-                            };
-                        });
-
-                        newModuleTopLevelNodes.push(serviceElement);
-                        return;
-                    }
+            const moduleTopLevelNodes: ProjectTreeElement[] = [];
+            Object.keys(moduleNode.functions).forEach(functionId => {
+                const functionNode = moduleNode.functions[functionId];
+                const functionFilePath = `${filePath}${functionNode.filePath}`;
+                moduleTopLevelNodes.push({
+                    sourceRoot,
+                    name: functionNode.name,
+                    kind: 'Function',
+                    moduleName,
+                    filePath: functionFilePath,
+                    startLine: functionNode.position.startLine,
+                    startColumn: functionNode.position.startColumn
                 });
             });
-            newModuleTopLevelNodes.sort((node1, node2) => node1.name.localeCompare(node2.name));
-            newModuleElement.topLevelNodes = newModuleTopLevelNodes;
 
-            moduleElementList.push(newModuleElement);
+            Object.keys(moduleNode.services).forEach(serviceId => {
+                const serviceNode = moduleNode.services[serviceId];
+                const serviceFilePath = `${filePath}${serviceNode.filePath}`;
+                const serviceElement: ProjectTreeElement = {
+                    sourceRoot,
+                    name: serviceNode.name,
+                    kind: 'Service',
+                    moduleName,
+                    filePath: serviceFilePath,
+                    startLine: serviceNode.position.startLine,
+                    startColumn: serviceNode.position.startColumn
+                };
+                serviceElement.resources = serviceNode.resources.map((resourceNode: any) => {
+                    return {
+                        sourceRoot,
+                        name: resourceNode.name,
+                        kind: 'Resource',
+                        moduleName,
+                        serviceName: serviceNode.name,
+                        filePath: `${filePath}${serviceNode.filePath}`,
+                        startLine: resourceNode.position.startLine,
+                        startColumn: resourceNode.position.startColumn
+                    };
+                });
+                moduleTopLevelNodes.push(serviceElement);
+            });
+
+            if (moduleNode.default) {
+                moduleTopLevelNodes.forEach(node => {
+                    moduleElementList.push(node);
+                });
+            } else {
+                moduleTopLevelNodes.sort((node1, node2) => node1.name.localeCompare(node2.name));
+                moduleElement.topLevelNodes = moduleTopLevelNodes;
+                nonDefaultModuleElements.push(moduleElement);
+            }
         });
-
-        moduleElementList.sort((node1, node2) => node1.name.localeCompare(node2.name));
+        nonDefaultModuleElements.forEach(node => {
+            moduleElementList.push(node);
+        });
         return moduleElementList;
     }
 

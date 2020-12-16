@@ -1,6 +1,6 @@
 {
   "name": "@ballerina/visualize-syntax-tree",
-  "version": "2.0.0-Preview7",
+  "version": "2.0.0-Preview8-SNAPSHOT",
   "description": "Generates a syntax tree for .bal source files",
   "main": "lib/index.js",
   "scripts": {
@@ -10,7 +10,7 @@
     "build": "composer pkg:build"
   },
   "devDependencies": {
-    "@ballerina/composer-cli": "^2.0.0-Preview7"
+    "@ballerina/composer-cli": "^2.0.0-Preview8-SNAPSHOT"
   },
   "author": "ballerina.io",
   "license": "ISC"

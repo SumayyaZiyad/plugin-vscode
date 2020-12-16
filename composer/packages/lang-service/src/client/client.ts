@@ -26,7 +26,7 @@ export class BallerinaLangClient implements IBallerinaLangClient {
     }
 
     public getProjectAST(params: GetProjectASTParams): Thenable<GetProjectASTResponse> {
-        return this.lsConnection.sendRequest<GetProjectASTResponse>("ballerinaProject/modules", params);
+        return this.lsConnection.sendRequest<GetProjectASTResponse>("ballerinaProject/packages", params);
     }
 
     public getAST(params: GetASTParams): Thenable<GetASTResponse> {

@@ -12,10 +12,10 @@ const getLangClientMethods = (langClient: ExtendedLangClient): WebViewMethod[] =
         }
     },
     {
-        methodName: 'getProjectAST',
+        methodName: 'getPackages',
         handler: (args: any[]) => {
             return langClient.onReady().then(() => {
-                return langClient.getProjectAST(args[0]);
+                return langClient.getPackages(args[0]);
             });
         }
     },
@@ -72,18 +72,18 @@ const getLangClientMethods = (langClient: ExtendedLangClient): WebViewMethod[] =
             };
             const activeTextEditor = window.activeTextEditor;
             const visibleTextEditors = window.visibleTextEditors;
-            const findByDocUri = (editor: TextEditor) => editor.document.uri.toString() 
-                                    === params.textDocumentIdentifier.uri;
+            const findByDocUri = (editor: TextEditor) => editor.document.uri.toString()
+                === params.textDocumentIdentifier.uri;
             const foundVisibleEditor = visibleTextEditors.find(findByDocUri);
 
             if (activeTextEditor && findByDocUri(activeTextEditor)) {
                 revealRangeInEditor(activeTextEditor);
             } else if (foundVisibleEditor) {
-                revealRangeInEditor(foundVisibleEditor);            
-                return Promise.resolve();   
+                revealRangeInEditor(foundVisibleEditor);
+                return Promise.resolve();
             } else {
                 return window.showTextDocument(Uri.parse(params.textDocumentIdentifier.uri)
-                    ,{
+                    , {
                         viewColumn: ViewColumn.One
                     })
                     .then((textEditor) => {
@@ -120,24 +120,24 @@ const getLangClientMethods = (langClient: ExtendedLangClient): WebViewMethod[] =
 };
 
 const undoRedoMethods = [{
-        methodName: 'undo',
-        handler: (args: any[]) => {
-            commands.executeCommand('workbench.action.focusPreviousGroup')
-                .then(() => {
-                    commands.executeCommand('undo');
-                });
-        }
-    },
-    {
-        methodName: 'redo',
-        handler: (args: any[]) => {
-            commands.executeCommand('workbench.action.focusPreviousGroup')
-                .then(() => {
-                    commands.executeCommand('redo');
-                });
-           
-        }
+    methodName: 'undo',
+    handler: (args: any[]) => {
+        commands.executeCommand('workbench.action.focusPreviousGroup')
+            .then(() => {
+                commands.executeCommand('undo');
+            });
     }
+},
+{
+    methodName: 'redo',
+    handler: (args: any[]) => {
+        commands.executeCommand('workbench.action.focusPreviousGroup')
+            .then(() => {
+                commands.executeCommand('redo');
+            });
+
+    }
+}
 ];
 
 export class WebViewRPCHandler {
@@ -145,7 +145,7 @@ export class WebViewRPCHandler {
     private _sequence: number = 1;
     private _callbacks: Map<number, Function> = new Map();
 
-    constructor(public methods: Array<WebViewMethod>, public webViewPanel: WebviewPanel){
+    constructor(public methods: Array<WebViewMethod>, public webViewPanel: WebviewPanel) {
         webViewPanel.webview.onDidReceiveMessage(this._onRemoteMessage.bind(this));
         this.webViewPanel = webViewPanel;
     }
@@ -192,7 +192,7 @@ export class WebViewRPCHandler {
         webViewPanel: WebviewPanel,
         langClient: ExtendedLangClient,
         methods: Array<WebViewMethod> = [])
-            : WebViewRPCHandler {
+        : WebViewRPCHandler {
         return new WebViewRPCHandler(
             [...methods, ...getLangClientMethods(langClient), ...undoRedoMethods],
             webViewPanel);

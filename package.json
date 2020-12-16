@@ -2,7 +2,7 @@
     "name": "ballerina",
     "displayName": "Ballerina",
     "description": "Language Intelligence, Diagram View, Debugging, code formatting and refactoring for Ballerina",
-    "version": "2.0.0-Preview7",
+    "version": "2.0.0-Preview8-SNAPSHOT",
     "publisher": "ballerina",
     "repository": {
         "type": "git",
@@ -29,6 +29,14 @@
         "onCommand:ballerina.visualizeSyntaxTree"
     ],
     "contributes": {
+        "views": {
+            "explorer": [
+                {
+                    "id": "ballerinaProjectTree",
+                    "name": "Ballerina Project Overview"
+                }
+            ]
+        },
         "languages": [
             {
                 "id": "ballerina",
@@ -258,7 +266,16 @@
                 "title": "Syntax Tree Visualizer",
                 "category": "Ballerina"
             }
-        ]
+        ],
+        "menus": {
+            "view/title": [
+                {
+                    "command": "ballerina.refreshProjectTree",
+                    "when": "view == ballerinaProjectTree",
+                    "group": "navigation"
+                }
+            ]
+        }
     },
     "main": "./dist/extension",
     "scripts": {
