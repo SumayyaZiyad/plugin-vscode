@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import ELK from 'elkjs/lib/elk.bundled';
 
+import * as _ from 'lodash';
 import { ExtendedLangClient } from '../core/extended-language-client';
 import { BallerinaExtension } from '../core';
 import { getCommonWebViewOptions, WebViewMethod, WebViewRPCHandler } from '../utils';
@@ -29,14 +30,14 @@ function validateForVisualization(context: vscode.ExtensionContext, langClient: 
 }
 
 function visualizeSyntaxTree(context: vscode.ExtensionContext, langClient: ExtendedLangClient, sourceRoot: string){    
-    vscode.workspace.onDidChangeTextDocument(() => {
+    vscode.workspace.onDidChangeTextDocument(_.debounce(() => {
         if (syntaxTreePanel){
             syntaxTreePanel.webview.postMessage({
                 command: 'update',
                 docUri: sourceRoot
             });
         }
-    });
+    }, 500));
 
     createSyntaxTreePanel(context, langClient, sourceRoot);
 }
