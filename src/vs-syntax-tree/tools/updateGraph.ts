@@ -28,7 +28,7 @@ export function updateTreeGraph(targetArray: TreeNode[], nodeID: string) {
             nodeColor: targetArray[i].diagnostics ? "#DB3247" : (targetArray[i].children.length ? "#16B16F" : "#6640D1")
         });
 
-        if(targetArray[i].value !== "syntaxTree"){
+        if(nodeMembers.length > 1){
             nodeEdges.push({
                 id: `e${targetArray[i].nodeID}`,
                 sources: [targetArray[i].parentID],
