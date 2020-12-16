@@ -5,6 +5,7 @@ import { updateTreeGraph } from "./updateGraph";
 export let nodeMembers: any[], nodeEdges: any[], nodeArray: TreeNode[];
 
 export function retrieveGraph (responseTree: JSON){
+    console.log(JSON.stringify(responseTree, null, 2));
     nodeArray = [];
     const retrievedMap = treeMapper(responseTree, {}, 'Tree Root');
     nodeMembers = retrievedMap[0]; nodeEdges = retrievedMap[1];

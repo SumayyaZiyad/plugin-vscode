@@ -19,7 +19,7 @@ export function treeMapper(obj: JSON, parentObj: TreeNode | any, nodeKind: strin
                     type: props,
                     parentID: parentObj.nodeID,
                     children: [],
-                    diagnostics: obj[props].typeData ? obj[props].typeData.diagnostics : []
+                    diagnostics: obj[props].isMissing
                 });
             }
 
@@ -32,7 +32,7 @@ export function treeMapper(obj: JSON, parentObj: TreeNode | any, nodeKind: strin
                     parentID: parentObj.nodeID,
                     didCollapse: false,
                     children: [],
-                    diagnostics: nodeArray.length ? (obj[props].typeData ? obj[props].typeData.diagnostics : []) : []
+                    diagnostics: obj[props].isMissing
                 };
 
                 nodeArray.length ? parentObj.children.push(childNode) : nodeArray.push(childNode);
@@ -48,7 +48,7 @@ export function treeMapper(obj: JSON, parentObj: TreeNode | any, nodeKind: strin
                     parentID: parentObj.nodeID,
                     didCollapse: false,
                     children: [],
-                    diagnostics: obj[props].typeData ? obj[props].typeData.diagnostics : []
+                    diagnostics: obj[props].isMissing
                 };
     
                 parentObj.children.push(childNode);
@@ -84,7 +84,7 @@ function graphMapper (array: TreeNode[], graphNodes: any[], graphEdges: any[], l
             type: array[i].type,
             kind: array[i].kind,
             ifParent: array[i].children.length ? true : false,
-            nodeColor: array[i].diagnostics.length ? "#DB3247" : (array[i].children.length ? "#16B16F" : "#6640D1")
+            nodeColor: array[i].diagnostics ? "#DB3247" : (array[i].children.length ? "#16B16F" : "#6640D1")
         });
 
         if(graphNodes.length > 1){
