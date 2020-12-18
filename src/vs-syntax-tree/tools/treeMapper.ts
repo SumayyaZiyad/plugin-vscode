@@ -4,7 +4,7 @@ import { TreeNode } from "./resources";
 
 let rootLevel = 0, childNode: any, nodeCount = -1;
 
-export function treeMapper(obj: JSON, parentObj: TreeNode | any, nodeKind: string) {
+export function treeMapper(obj: JSON, parentObj: TreeNode | any) {
     for (var props in obj) {
         if (props === "position"){
             return obj[props];
@@ -12,51 +12,56 @@ export function treeMapper(obj: JSON, parentObj: TreeNode | any, nodeKind: strin
 
         else if (props !== "relativeResourcePath" && typeof obj[props] === "object") {
             if (obj[props].hasOwnProperty("kind" && "value" && "isToken")) {
-                parentObj.children.push({
+                if(obj[props].invalidNodes.length){
+                    for (var element in obj[props].invalidNodes){
+                        parentObj.children.push({
+                            nodeID: `t${++nodeCount}`,
+                            value: obj[props].invalidNodes[element].value,
+                            parentID: parentObj.nodeID,
+                            children: [],
+                            diagnostics: true
+                        });
+                    }
+                }
+
+                childNode = {
                     nodeID: `c${++nodeCount}`,
                     value: obj[props].value,
-                    kind: obj[props].kind,
-                    type: props,
                     parentID: parentObj.nodeID,
                     children: [],
                     diagnostics: obj[props].isMissing
-                });
+                };
+                parentObj.children.push(childNode);
             }
 
             else if (props.match(/^[0-9]+$/) === null) {
                 childNode = {
                     nodeID: `p${++nodeCount}`,
                     value: props,
-                    kind: nodeKind,
-                    type: props,
                     parentID: parentObj.nodeID,
                     didCollapse: false,
                     children: [],
                     diagnostics: obj[props].isMissing
                 };
-
                 nodeArray.length ? parentObj.children.push(childNode) : nodeArray.push(childNode);
-                treeMapper(obj[props], childNode, nodeKind);
+                treeMapper(obj[props], childNode);
             }
 
             else if(obj[props].kind){
                 childNode = {
                     nodeID: `p${++nodeCount}`,
                     value: obj[props].kind,
-                    kind: obj[props].kind,
-                    type: obj[props].kind,
                     parentID: parentObj.nodeID,
                     didCollapse: false,
                     children: [],
                     diagnostics: obj[props].isMissing
                 };
-    
                 parentObj.children.push(childNode);
-                treeMapper(obj[props], childNode, obj[props]);
+                treeMapper(obj[props], childNode);
             }
 
             else{
-                treeMapper(obj[props], parentObj, nodeKind);
+                treeMapper(obj[props], parentObj);
             }
         }
     }
@@ -81,10 +86,8 @@ function graphMapper (array: TreeNode[], graphNodes: any[], graphEdges: any[], l
             layoutOptions: { 
                 'elk.position': '('+(toInteger(position))+', 0)'
             },
-            type: array[i].type,
-            kind: array[i].kind,
             ifParent: array[i].children.length ? true : false,
-            nodeColor: array[i].diagnostics ? "#DB3247" : (array[i].children.length ? "#16B16F" : "#6640D1")
+            nodeColor: array[i].diagnostics ? "#DB3247" : (array[i].nodeID.charAt(0) === "t" ? "#C0C0C0" : ( array[i].nodeID.charAt(0) === "p" ? "#16B16F" : "#6640D1"))
         });
 
         if(graphNodes.length > 1){
