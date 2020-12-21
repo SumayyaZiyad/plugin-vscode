@@ -19,8 +19,15 @@ export interface Node {
     label: string;
     nodeColor: string;
     ifParent: boolean;
+    leadingMinutiae: Minutiae[];
+    trailingMinutiae: Minutiae[];
     width: number;
     height: number;
+}
+
+export interface Minutiae {
+    kind: string;
+    minutiae: string;
 }
 
 export interface TreeEdge {

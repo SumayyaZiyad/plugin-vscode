@@ -14,6 +14,7 @@ function TreeNode(props: TreeNodeProps) {
     }
 
     const undoHover = () => {
+        console.log(props.node);
         setDidHover(false);
     }
 
@@ -29,6 +30,7 @@ function TreeNode(props: TreeNodeProps) {
                     backgroundColor: props.node.nodeColor,
                     borderRadius: 10,
                     color: "white",
+                    cursor: "default",
                     fontSize: 14,
                     height: props.node.height,
                     left: props.node.x,
@@ -45,7 +47,7 @@ function TreeNode(props: TreeNodeProps) {
                 {props.node.label}
             </div>
 
-            {didHover && 
+            {!props.node.ifParent && didHover && 
                 <div
                     style={{
                         backgroundColor: "#faf3c0",
@@ -58,6 +60,23 @@ function TreeNode(props: TreeNodeProps) {
                     }}
                 >
                     <p> Value: {props.node.label}</p>
+
+                    <p>Leading Minutiae: </p>
+                    {props.node.leadingMinutiae && props.node.leadingMinutiae.length > 0 && props.node.leadingMinutiae.map((item, id) => {
+                        return <p key={id}>
+                            {item.kind}
+                        </p>
+                    })}
+                    {(!props.node.leadingMinutiae || props.node.leadingMinutiae.length < 1) && <p>Unavailable</p>}
+
+                    <p>Trailing Minutiae: </p>
+                    {props.node.trailingMinutiae && props.node.trailingMinutiae.length > 0 && props.node.trailingMinutiae.map((item, id) => {
+                        return <p key={id}>
+                            {item.kind}
+                        </p>
+                    })}
+
+                    {(!props.node.trailingMinutiae || props.node.trailingMinutiae.length < 1) && <p>Unavailable</p>}
                 </div>
             }
         </div>

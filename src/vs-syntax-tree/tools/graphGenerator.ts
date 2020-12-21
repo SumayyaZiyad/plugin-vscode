@@ -9,6 +9,7 @@ export function retrieveGraph (responseTree: JSON){
     nodeArray = [];
     const retrievedMap = treeMapper(responseTree, {});
     nodeMembers = retrievedMap[0]; nodeEdges = retrievedMap[1];
+    console.log(nodeArray);
     return setGraph();
 }
 

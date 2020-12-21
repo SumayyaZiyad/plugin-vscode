@@ -5,6 +5,8 @@ export interface TreeNode {
     didCollapse: boolean;
     ifParent: boolean;
     children: TreeNode[];
+    leadingMinutiae: any[];
+    trailingMinutiae: any[];
     diagnostics: any;
 }
 
