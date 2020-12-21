@@ -26,7 +26,7 @@ export function treeMapper(obj: JSON, parentObj: TreeNode | any) {
 
                 childNode = {
                     nodeID: `c${++nodeCount}`,
-                    value: obj[props].value,
+                    value: obj[props].isMissing ? obj[props].kind : obj[props].value,
                     parentID: parentObj.nodeID,
                     children: [],
                     diagnostics: obj[props].isMissing
@@ -37,7 +37,7 @@ export function treeMapper(obj: JSON, parentObj: TreeNode | any) {
             else if (props.match(/^[0-9]+$/) === null) {
                 childNode = {
                     nodeID: `p${++nodeCount}`,
-                    value: props,
+                    value: obj[props].isMissing ? obj[props].kind : props,
                     parentID: parentObj.nodeID,
                     didCollapse: false,
                     children: [],
