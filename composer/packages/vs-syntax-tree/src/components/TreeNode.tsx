@@ -59,24 +59,30 @@ function TreeNode(props: TreeNodeProps) {
                         zIndex: 1
                     }}
                 >
-                    <p> Value: {props.node.label}</p>
+                    <p> <b>Kind :</b> {props.node.kind}</p>
+                    <hr/>
 
-                    <p>Leading Minutiae: </p>
+                    <p style={{fontWeight: "bold"}}>
+                        Leading Minutiae
+                    </p>
                     {props.node.leadingMinutiae && props.node.leadingMinutiae.length > 0 && props.node.leadingMinutiae.map((item, id) => {
                         return <p key={id}>
                             {item.kind}
                         </p>
                     })}
-                    {(!props.node.leadingMinutiae || props.node.leadingMinutiae.length < 1) && <p>Unavailable</p>}
+                    {(!props.node.leadingMinutiae || props.node.leadingMinutiae.length < 1) && <p>None</p>}
+                    <hr/>
 
-                    <p>Trailing Minutiae: </p>
+                    <p style={{fontWeight: "bold"}}>
+                        Trailing Minutiae
+                    </p>
                     {props.node.trailingMinutiae && props.node.trailingMinutiae.length > 0 && props.node.trailingMinutiae.map((item, id) => {
                         return <p key={id}>
                             {item.kind}
                         </p>
                     })}
 
-                    {(!props.node.trailingMinutiae || props.node.trailingMinutiae.length < 1) && <p>Unavailable</p>}
+                    {(!props.node.trailingMinutiae || props.node.trailingMinutiae.length < 1) && <p>None</p>}
                 </div>
             }
         </div>

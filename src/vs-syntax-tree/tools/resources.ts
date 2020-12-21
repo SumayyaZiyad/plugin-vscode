@@ -1,6 +1,7 @@
 export interface TreeNode {
     nodeID: string;
     value: string;
+    kind: string;
     parentID: string;
     didCollapse: boolean;
     ifParent: boolean;

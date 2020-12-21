@@ -19,6 +19,7 @@ export interface Node {
     label: string;
     nodeColor: string;
     ifParent: boolean;
+    kind: string;
     leadingMinutiae: Minutiae[];
     trailingMinutiae: Minutiae[];
     width: number;
