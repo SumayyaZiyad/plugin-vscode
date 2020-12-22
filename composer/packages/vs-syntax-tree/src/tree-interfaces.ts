@@ -48,3 +48,17 @@ export interface Coords {
     x: number;
     y: number;
 }
+
+export interface SyntaxTreeProps {
+    onCollapseTree: (nodeID: string) => void;
+    renderTree: () => Promise<TreeGraph>;
+}
+
+export interface TreeNodeProps {
+    node: Node;
+    onCollapseTree: any;
+}
+
+export interface TreeEdgeProps {
+    edge: TreeEdge;
+}

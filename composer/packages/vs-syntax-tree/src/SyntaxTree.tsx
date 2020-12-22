@@ -1,12 +1,7 @@
 import React, {useEffect, useState} from "react";
 import TreeNodeEdge from "./components/TreeEdge";
 import TreeNode from "./components/TreeNode";
-import { TreeGraph } from "./tree-interfaces";
-
-interface SyntaxTreeProps {
-    onCollapseTree: (nodeID: string) => void;
-    renderTree: () => Promise<TreeGraph>;
-}
+import { SyntaxTreeProps, TreeGraph } from "./tree-interfaces";
 
 function SyntaxTree(props: SyntaxTreeProps) {
     const [treeGraph, setTreeGraph] = useState<TreeGraph | undefined>(undefined);
@@ -15,8 +10,6 @@ function SyntaxTree(props: SyntaxTreeProps) {
         props.renderTree().then((result) => {
             setTreeGraph(result);
         });
-
-        console.log("Use effect has been invoked");
     }, [props]);
 
     return (
@@ -26,9 +19,9 @@ function SyntaxTree(props: SyntaxTreeProps) {
                 {
                     treeGraph.children.map((item, id) => {
                         return <TreeNode
-                                    node={item}
-                                    onCollapseTree={() => props.onCollapseTree(item.id)}
-                                    key={id}
+                                    node = {item}
+                                    onCollapseTree = {() => props.onCollapseTree(item.id)}
+                                    key = {id}
                                 />;
                     })
                 }
@@ -40,8 +33,8 @@ function SyntaxTree(props: SyntaxTreeProps) {
                         {
                             treeGraph.edges.map((item, id) => {
                                 return <TreeNodeEdge
-                                            edge={item}
-                                            key={id}
+                                            edge = {item}
+                                            key = {id}
                                         />;
                             })
                         }

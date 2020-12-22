@@ -1,24 +1,18 @@
 import React, {useState} from "react";
-import { Node } from "../tree-interfaces";
-
-interface TreeNodeProps {
-    node: Node;
-    onCollapseTree: any;
-}
+import { TreeNodeProps } from "../tree-interfaces";
 
 function TreeNode(props: TreeNodeProps) {
     const [didHover, setDidHover] = useState(false);
 
-    const onHover = () => {
+    function onHover() {
         setDidHover(true);
     }
 
-    const undoHover = () => {
-        console.log(props.node);
+    function undoHover() {
         setDidHover(false);
     }
 
-    const onClickNode = () => {
+    function onClickNode() {
         undoHover();
         props.onCollapseTree();
     }
@@ -26,7 +20,7 @@ function TreeNode(props: TreeNodeProps) {
     return (
         <div>
             <div
-                style={{
+                style = {{
                     backgroundColor: props.node.nodeColor,
                     borderRadius: 10,
                     color: "white",
@@ -49,7 +43,7 @@ function TreeNode(props: TreeNodeProps) {
 
             {!props.node.ifParent && didHover && 
                 <div
-                    style={{
+                    style = {{
                         backgroundColor: "#faf3c0",
                         borderRadius: 5,
                         left: props.node.x + (props.node.width/1.5),
@@ -59,29 +53,30 @@ function TreeNode(props: TreeNodeProps) {
                         zIndex: 1
                     }}
                 >
-                    <p> <b>Kind :</b> {props.node.kind}</p>
-                    <hr/>
+                    <p> <b>Kind :</b> {props.node.kind}</p> <hr/>
 
-                    <p style={{fontWeight: "bold"}}>
+                    <p style = {{fontWeight: "bold"}}>
                         Leading Minutiae
                     </p>
-                    {props.node.leadingMinutiae && props.node.leadingMinutiae.length > 0 && props.node.leadingMinutiae.map((item, id) => {
-                        return <p key={id}>
-                            {item.kind}
-                        </p>
-                    })}
-                    {(!props.node.leadingMinutiae || props.node.leadingMinutiae.length < 1) && <p>None</p>}
-                    <hr/>
+                    {props.node.leadingMinutiae && props.node.leadingMinutiae.length > 0 && 
+                        props.node.leadingMinutiae.map((item, id) => {
+                            return <p key = {id}>
+                                {item.kind}
+                            </p>
+                        })
+                    }
+                    {(!props.node.leadingMinutiae || props.node.leadingMinutiae.length < 1) && <p>None</p>} <hr/>
 
-                    <p style={{fontWeight: "bold"}}>
+                    <p style = {{fontWeight: "bold"}}>
                         Trailing Minutiae
                     </p>
-                    {props.node.trailingMinutiae && props.node.trailingMinutiae.length > 0 && props.node.trailingMinutiae.map((item, id) => {
-                        return <p key={id}>
-                            {item.kind}
-                        </p>
-                    })}
-
+                    {props.node.trailingMinutiae && props.node.trailingMinutiae.length > 0 && 
+                        props.node.trailingMinutiae.map((item, id) => {
+                            return <p key = {id}>
+                                {item.kind}
+                            </p>
+                        })
+                    }
                     {(!props.node.trailingMinutiae || props.node.trailingMinutiae.length < 1) && <p>None</p>}
                 </div>
             }
