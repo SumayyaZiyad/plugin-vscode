@@ -128,24 +128,9 @@ export function getComposerCSSFiles(): string[] {
     ];
 }
 
-export function getComposerCSSFilesForDocView(): string[] {
-    let cssFiles: string[] = getComposerCSSFiles();
-    cssFiles.push(join(getComposerPath(), 'themes', 'styles.css'));
-    cssFiles.push(join(getComposerURI(), 'themes', 'semantic.min.css'));
-    cssFiles.push(join(getComposerURI(), 'themes', 'doc-theme.css'));
-    return cssFiles;
-}
-
 export function getComposerWebViewOptions(): Partial<WebViewOptions> {
     return {
         jsFiles: getComposerJSFiles(),
         cssFiles: getComposerCSSFiles()
-    };
-}
-
-export function getComposerWebViewOptionsForDocView(): Partial<WebViewOptions> {
-    return {
-        jsFiles: getComposerJSFiles(),
-        cssFiles: getComposerCSSFilesForDocView()
     };
 }

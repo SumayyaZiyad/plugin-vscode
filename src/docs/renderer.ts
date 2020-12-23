@@ -1,6 +1,6 @@
 import { ExtendedLangClient } from '../core/extended-language-client';
 import { ExtensionContext } from 'vscode';
-import { getLibraryWebViewContent, WebViewOptions, getComposerWebViewOptionsForDocView } from '../utils';
+import { getLibraryWebViewContent, WebViewOptions, getComposerWebViewOptions } from '../utils';
 
 export function render(context: ExtensionContext, langClient: ExtendedLangClient)
     : string {
@@ -36,7 +36,7 @@ export function render(context: ExtensionContext, langClient: ExtendedLangClient
     `;
 
     const webViewOptions: WebViewOptions = {
-        ...getComposerWebViewOptionsForDocView(),
+        ...getComposerWebViewOptions(),
         body, scripts, styles, bodyCss
     };
 

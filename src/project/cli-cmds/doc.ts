@@ -13,34 +13,11 @@ function activateDocCommand() {
             reporter.sendTelemetryEvent(TM_EVENT_EXECUTE_BALLERINA_DOC, { component: CMP_BALLERINA_DOC });
 
             const currentProject = await getCurrentBallerinaProject();
-            if (!currentProject.path) {
+            if (currentProject.packageName === '.') {
                 window.showErrorMessage('Open editor does not reside inside a Ballerina project.');
                 return;
             }
-
-            const docOptions = [{
-                description: "ballerina doc <module-name>",
-                label: "Documentation for module",
-                id: "doc-module"
-            }, {
-                description: "ballerina doc --all",
-                label: "Documentation for project",
-                id: "doc-all"
-            }];
-
-            const userSelection = await window.showQuickPick(docOptions, { placeHolder: 'Select a doc option.' });
-
-            if (userSelection!.id === 'doc-module') {
-                let moduleName;
-                do {
-                    moduleName = await window.showInputBox({ placeHolder: 'Enter module name.' });
-                } while (!moduleName || moduleName && moduleName.trim().length === 0);
-                runCommand(currentProject, BALLERINA_COMMANDS.DOC, moduleName);
-            }
-
-            if (userSelection!.id === 'doc-all') {
-                runCommand(currentProject, BALLERINA_COMMANDS.DOC, "--all");
-            }
+            runCommand(currentProject, BALLERINA_COMMANDS.DOC, currentProject.path!);
 
         } catch (error) {
             reporter.sendTelemetryException(error, { component: CMP_BALLERINA_DOC });

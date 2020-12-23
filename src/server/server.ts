@@ -49,7 +49,7 @@ export function getServerOptions(ballerinaCmd: string): ServerOptions {
     };
 }
 
-export function getOldCliServerOptions(ballerinaCmd: string, experimental: boolean, debugLogsEnabled: boolean, traceLogsEnabled: boolean, enableStdlibDefinition: boolean): ServerOptions {
+export function getOldCliServerOptions(ballerinaCmd: string, experimental: boolean, debugLogsEnabled: boolean, traceLogsEnabled: boolean): ServerOptions {
     debug(`Using Ballerina CLI command '${ballerinaCmd}' for Language server.`);
     let cmd = ballerinaCmd;
     let args = ["start-language-server"];

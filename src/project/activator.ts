@@ -38,8 +38,8 @@ export function activate(ballerinaExtInstance: BallerinaExtension) {
                     uri: document.uri.toString()
                 }
             }).then((project) => {
-                if (project.path) {
-                    promptOpenFolder(project.path);
+                if (project.packageName !== '.') {
+                    promptOpenFolder(project.path!);
                 }
             });
         }

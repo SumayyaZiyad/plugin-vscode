@@ -108,6 +108,7 @@ export interface BallerinaProject {
     path?: string;
     version?: string;
     author?: string;
+    packageName?: string;
 }
 
 export interface GetBallerinaProjectParams {

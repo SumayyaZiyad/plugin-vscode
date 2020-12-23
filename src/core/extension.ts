@@ -35,7 +35,7 @@ import { getServerOptions, getOldServerOptions, getOldCliServerOptions } from '.
 import { ExtendedLangClient } from './extended-language-client';
 import { log, getOutputChannel } from '../utils/index';
 import { AssertionError } from "assert";
-import { OVERRIDE_BALLERINA_HOME, BALLERINA_HOME, ALLOW_EXPERIMENTAL, ENABLE_DEBUG_LOG, ENABLE_TRACE_LOG, ENABLE_STDLIB_DEFINITION } from "./preferences";
+import { OVERRIDE_BALLERINA_HOME, BALLERINA_HOME, ALLOW_EXPERIMENTAL, ENABLE_DEBUG_LOG, ENABLE_TRACE_LOG } from "./preferences";
 import TelemetryReporter from "vscode-extension-telemetry";
 import { createTelemetryReporter, TM_EVENT_ERROR_INVALID_BAL_HOME_CONFIGURED, TM_EVENT_ERROR_INVALID_BAL_HOME_DETECTED, TM_EVENT_OLD_BAL_HOME, TM_EVENT_OLD_BAL_PLUGIN, TM_EVENT_ERROR_OLD_BAL_HOME_DETECTED } from "../telemetry";
 
@@ -143,7 +143,7 @@ export class BallerinaExtension {
                 if (this.isNewConfigChangeSupported) {
                     serverOptions = getServerOptions(this.ballerinaCmd);
                 } else if (this.isNewCLICmdSupported) {
-                    serverOptions = getOldCliServerOptions(this.ballerinaCmd, this.isExperimental(), this.isDebugLogsEnabled(), this.isTraceLogsEnabled(), this.isStdlibDefinitionEnabled());
+                    serverOptions = getOldCliServerOptions(this.ballerinaCmd, this.isExperimental(), this.isDebugLogsEnabled(), this.isTraceLogsEnabled());
                 } else {
                     serverOptions = getOldServerOptions(this.ballerinaHome, this.isExperimental(), this.isDebugLogsEnabled(), this.isTraceLogsEnabled());
                 }
@@ -452,10 +452,6 @@ export class BallerinaExtension {
 
     isTraceLogsEnabled(): boolean {
         return <boolean>workspace.getConfiguration().get(ENABLE_TRACE_LOG);
-    }
-
-    isStdlibDefinitionEnabled(): boolean {
-        return <boolean>workspace.getConfiguration().get(ENABLE_STDLIB_DEFINITION);
     }
 
     autoDetectBallerinaHome(): { home: string, cmd: string, isOldBallerinaDist: boolean, isBallerinaNotFound: boolean } {

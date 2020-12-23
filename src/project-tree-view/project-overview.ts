@@ -301,7 +301,12 @@ export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectTreeE
                     moduleElementList.push(node);
                 });
             } else {
-                moduleTopLevelNodes.sort((node1, node2) => node1.name.localeCompare(node2.name));
+                moduleTopLevelNodes.sort((node1, node2) => {
+                    if (node1.name && node2.name) {
+                        return node1.name.localeCompare(node2.name);
+                    }
+                    return -1;
+                });
                 moduleElement.topLevelNodes = moduleTopLevelNodes;
                 nonDefaultModuleElements.push(moduleElement);
             }
