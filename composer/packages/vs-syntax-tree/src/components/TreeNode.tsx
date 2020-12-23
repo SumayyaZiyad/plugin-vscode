@@ -41,7 +41,7 @@ function TreeNode(props: TreeNodeProps) {
                 {props.node.label}
             </div>
 
-            {!props.node.ifParent && didHover && 
+            {didHover &&
                 <div
                     style = {{
                         backgroundColor: "#faf3c0",

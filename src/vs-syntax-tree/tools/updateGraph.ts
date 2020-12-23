@@ -26,7 +26,7 @@ export function updateTreeGraph(targetArray: TreeNode[], nodeID: string) {
                 'elk.position': '('+position+', 0)'
             },
             ifParent: targetArray[i].children.length ? true : false,
-            nodeColor: targetArray[i].diagnostics ? "#DB3247" : (targetArray[i].nodeID.charAt(0) === "t" ? "#C0C0C0" : ( targetArray[i].nodeID.charAt(0) === "p" ? "#16B16F" : "#6640D1"))
+            nodeColor: targetArray[i].errorNode ? "#DB3247" : (targetArray[i].nodeID.charAt(0) === "p" ? "#16B16F" : "#6640D1")
         });
 
         if(nodeMembers.length > 1){

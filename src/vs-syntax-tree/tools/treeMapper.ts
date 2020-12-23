@@ -6,7 +6,7 @@ let rootLevel = 0, childNode: any, nodeCount = -1;
 
 export function treeMapper(obj: JSON, parentObj: TreeNode | any) {
     for (var props in obj) {
-        if (props === "position"){
+        if (props === "leadingMinutiae"){
             return obj[props];
         }
 
@@ -20,7 +20,7 @@ export function treeMapper(obj: JSON, parentObj: TreeNode | any) {
                             kind: "Invalid",
                             parentID: parentObj.nodeID,
                             children: [],
-                            diagnostics: true
+                            errorNode: true
                         });
                     }
                 }
@@ -33,7 +33,7 @@ export function treeMapper(obj: JSON, parentObj: TreeNode | any) {
                     kind: obj[props].kind,
                     leadingMinutiae: obj[props].leadingMinutiae,
                     trailingMinutiae: obj[props].trailingMinutiae,
-                    diagnostics: obj[props].isMissing
+                    errorNode: obj[props].isMissing
                 };
                 parentObj.children.push(childNode);
             }
@@ -43,10 +43,11 @@ export function treeMapper(obj: JSON, parentObj: TreeNode | any) {
                     nodeID: `p${++nodeCount}`,
                     value: obj[props].isMissing ? obj[props].kind : props,
                     kind: props,
+                    leadingMinutiae: obj[props].leadingMinutiae,
+                    trailingMinutiae: obj[props].trailingMinutiae,
                     parentID: parentObj.nodeID,
                     didCollapse: false,
-                    children: [],
-                    diagnostics: obj[props].isMissing
+                    children: []
                 };
                 nodeArray.length ? parentObj.children.push(childNode) : nodeArray.push(childNode);
                 treeMapper(obj[props], childNode);
@@ -57,10 +58,11 @@ export function treeMapper(obj: JSON, parentObj: TreeNode | any) {
                     nodeID: `p${++nodeCount}`,
                     value: obj[props].kind,
                     kind: obj[props].kind,
+                    leadingMinutiae: obj[props].leadingMinutiae,
+                    trailingMinutiae: obj[props].trailingMinutiae,
                     parentID: parentObj.nodeID,
                     didCollapse: false,
-                    children: [],
-                    diagnostics: obj[props].isMissing
+                    children: []
                 };
                 parentObj.children.push(childNode);
                 treeMapper(obj[props], childNode);
@@ -96,7 +98,7 @@ function graphMapper (array: TreeNode[], graphNodes: any[], graphEdges: any[], l
                 'elk.position': '('+(toInteger(position))+', 0)'
             },
             ifParent: array[i].children.length ? true : false,
-            nodeColor: array[i].diagnostics ? "#DB3247" : (array[i].nodeID.charAt(0) === "t" ? "#C0C0C0" : ( array[i].nodeID.charAt(0) === "p" ? "#16B16F" : "#6640D1"))
+            nodeColor: array[i].errorNode ? "#DB3247" : (array[i].nodeID.charAt(0) === "p" ? "#16B16F" : "#6640D1")
         });
 
         if(graphNodes.length > 1){

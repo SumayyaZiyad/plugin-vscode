@@ -8,7 +8,7 @@ export interface TreeNode {
     children: TreeNode[];
     leadingMinutiae: any[];
     trailingMinutiae: any[];
-    diagnostics: any;
+    errorNode?: any;
 }
 
 export const layoutOptions = {
