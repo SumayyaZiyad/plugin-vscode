@@ -59,6 +59,10 @@ export interface TreeNodeProps {
     onCollapseTree: any;
 }
 
+export interface TreeNodeDetailsProps {
+    node: Node;
+}
+
 export interface TreeEdgeProps {
     edge: TreeEdge;
 }

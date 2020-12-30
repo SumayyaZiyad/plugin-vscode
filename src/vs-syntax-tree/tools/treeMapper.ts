@@ -17,7 +17,7 @@ export function treeMapper(obj: JSON, parentObj: TreeNode | any) {
                         parentObj.children.push({
                             nodeID: `t${++nodeCount}`,
                             value: obj[props].invalidNodes[element].value,
-                            kind: "Invalid",
+                            kind: "Invalid Node",
                             parentID: parentObj.nodeID,
                             children: [],
                             errorNode: true
@@ -30,7 +30,7 @@ export function treeMapper(obj: JSON, parentObj: TreeNode | any) {
                     value: obj[props].isMissing ? obj[props].kind : obj[props].value,
                     parentID: parentObj.nodeID,
                     children: [],
-                    kind: obj[props].kind,
+                    kind: obj[props].isMissing ? "Missing "+obj[props].kind : obj[props].kind,
                     leadingMinutiae: obj[props].leadingMinutiae,
                     trailingMinutiae: obj[props].trailingMinutiae,
                     errorNode: obj[props].isMissing
@@ -88,7 +88,7 @@ function graphMapper (array: TreeNode[], graphNodes: any[], graphEdges: any[], l
 
         graphNodes.push({
             id: array[i].nodeID,
-            width: Math.max((array[i].value.length*9), 90),
+            width: Math.max((array[i].value.length*9), 150),
             height: 50,
             label: graphNodes.length ? array[i].value : "Syntax Tree",
             kind: array[i].kind,

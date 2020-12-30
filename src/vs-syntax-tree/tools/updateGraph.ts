@@ -16,7 +16,7 @@ export function updateTreeGraph(targetArray: TreeNode[], nodeID: string) {
 
         nodeMembers.push({
             id: targetArray[i].nodeID,
-            width: Math.max((targetArray[i].value.length*9), 90),
+            width: Math.max((targetArray[i].value.length*9), 150),
             height: 50,
             label: nodeMembers.length ? targetArray[i].value : "Syntax Tree",
             kind: targetArray[i].kind,

@@ -1,19 +1,20 @@
 import React, {useState} from "react";
 import { TreeNodeProps } from "../tree-interfaces";
+import NodeDetails from "./NodeDetails";
 
 function TreeNode(props: TreeNodeProps) {
-    const [didHover, setDidHover] = useState(false);
+    const [didHoverNode, setDidHoverNode] = useState(false);
 
-    function onHover() {
-        setDidHover(true);
+    function onHoverNode() {
+        setDidHoverNode(true);
     }
 
-    function undoHover() {
-        setDidHover(false);
+    function undoHoverNode() {
+        setDidHoverNode(false);
     }
 
     function onClickNode() {
-        undoHover();
+        undoHoverNode();
         props.onCollapseTree();
     }
 
@@ -21,65 +22,36 @@ function TreeNode(props: TreeNodeProps) {
         <div>
             <div
                 style = {{
-                    backgroundColor: props.node.nodeColor,
-                    borderRadius: 10,
-                    color: "white",
+                    display: "flex",
                     cursor: "default",
-                    fontSize: 14,
+                    backgroundColor: props.node.nodeColor,
+                    flexDirection: "row",
+                    justifyContent: "space-around",
+                    margin: "auto",
+                    top: props.node.y,
+                    width: props.node.width,
                     height: props.node.height,
                     left: props.node.x,
-                    lineHeight: "50px",
+                    borderRadius: 10,
                     position: "absolute",
-                    textAlign: "center",
-                    top: props.node.y,
-                    width: props.node.width
+                    lineHeight: "50px",
                 }}
-                onMouseOver = {onHover}
-                onMouseLeave = {undoHover}
-                onClick = {props.node.ifParent ? onClickNode : () => {}}
             >
-                {props.node.label}
-            </div>
-
-            {didHover &&
                 <div
                     style = {{
-                        backgroundColor: "#faf3c0",
-                        borderRadius: 5,
-                        left: props.node.x + (props.node.width/1.5),
-                        padding: 10,
-                        position: "absolute",
-                        top: props.node.y + (props.node.height/1.25),
-                        zIndex: 1
+                        color: "white",
+                        fontSize: 14,
+                        textAlign: "center"
                     }}
+                    onMouseOver = {onHoverNode}
+                    onMouseLeave = {undoHoverNode}
+                    onClick = {props.node.ifParent ? onClickNode : () => {}}
                 >
-                    <p> <b>Kind :</b> {props.node.kind}</p> <hr/>
-
-                    <p style = {{fontWeight: "bold"}}>
-                        Leading Minutiae
-                    </p>
-                    {props.node.leadingMinutiae && props.node.leadingMinutiae.length > 0 && 
-                        props.node.leadingMinutiae.map((item, id) => {
-                            return <p key = {id}>
-                                {item.kind}
-                            </p>
-                        })
-                    }
-                    {(!props.node.leadingMinutiae || props.node.leadingMinutiae.length < 1) && <p>None</p>} <hr/>
-
-                    <p style = {{fontWeight: "bold"}}>
-                        Trailing Minutiae
-                    </p>
-                    {props.node.trailingMinutiae && props.node.trailingMinutiae.length > 0 && 
-                        props.node.trailingMinutiae.map((item, id) => {
-                            return <p key = {id}>
-                                {item.kind}
-                            </p>
-                        })
-                    }
-                    {(!props.node.trailingMinutiae || props.node.trailingMinutiae.length < 1) && <p>None</p>}
+                    {props.node.label}
                 </div>
-            }
+            </div>
+
+            {didHoverNode && <NodeDetails node={props.node} />}
         </div>
     );
 }
