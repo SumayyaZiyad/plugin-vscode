@@ -1,10 +1,9 @@
-import { toInteger } from "lodash";
 import { nodeArray } from "./graphGenerator";
 import { TreeNode } from "./resources";
 
-let rootLevel = 0, childNode: any, nodeCount = -1;
+let childNode: any, nodeCount = -1;
 
-export function treeMapper(obj: JSON, parentObj: TreeNode | any) {
+export function treeMapper(obj: JSON, parentObj: TreeNode | any, treeLevel: number) {
     for (var props in obj) {
         if (props === "leadingMinutiae"){
             return obj[props];
@@ -14,14 +13,20 @@ export function treeMapper(obj: JSON, parentObj: TreeNode | any) {
             if (obj[props].hasOwnProperty("kind" && "value" && "isToken")) {
                 if(obj[props].invalidNodes.length){
                     for (var element in obj[props].invalidNodes){
-                        parentObj.children.push({
+                        childNode = {
                             nodeID: `t${++nodeCount}`,
                             value: obj[props].invalidNodes[element].value,
                             kind: "Invalid Node",
                             parentID: parentObj.nodeID,
                             children: [],
                             errorNode: true
+                        };
+
+                        parentObj.diagnostics.push({
+                            message: childNode.kind
                         });
+
+                        parentObj.children.push(childNode);
                     }
                 }
 
@@ -33,8 +38,16 @@ export function treeMapper(obj: JSON, parentObj: TreeNode | any) {
                     kind: obj[props].isMissing ? "Missing "+obj[props].kind : obj[props].kind,
                     leadingMinutiae: obj[props].leadingMinutiae,
                     trailingMinutiae: obj[props].trailingMinutiae,
-                    errorNode: obj[props].isMissing
+                    errorNode: obj[props].isMissing,
+                    diagnostics: []
                 };
+
+                if(obj[props].isMissing){
+                    parentObj.diagnostics.push({
+                        message: childNode.kind
+                    })
+                }
+
                 parentObj.children.push(childNode);
             }
 
@@ -46,11 +59,20 @@ export function treeMapper(obj: JSON, parentObj: TreeNode | any) {
                     leadingMinutiae: obj[props].leadingMinutiae,
                     trailingMinutiae: obj[props].trailingMinutiae,
                     parentID: parentObj.nodeID,
-                    didCollapse: false,
-                    children: []
+                    didCollapse: treeLevel < 2 ? true : false,
+                    children: [],
+                    diagnostics: []
                 };
+
+                if(obj[props].typeData && obj[props].typeData.diagnostics && obj[props].typeData.diagnostics.length > 0){
+                    childNode.diagnostics.push(obj[props].typeData.diagnostics);
+                    if(nodeArray.length){
+                        parentObj.diagnostics.push(childNode.diagnostics);
+                    }
+                }
+
                 nodeArray.length ? parentObj.children.push(childNode) : nodeArray.push(childNode);
-                treeMapper(obj[props], childNode);
+                treeMapper(obj[props], childNode, treeLevel+1);
             }
 
             else if(obj[props].kind){
@@ -61,59 +83,23 @@ export function treeMapper(obj: JSON, parentObj: TreeNode | any) {
                     leadingMinutiae: obj[props].leadingMinutiae,
                     trailingMinutiae: obj[props].trailingMinutiae,
                     parentID: parentObj.nodeID,
-                    didCollapse: false,
-                    children: []
+                    didCollapse: treeLevel < 2 ? true : false,
+                    children: [],
+                    diagnostics: []
                 };
+
+                if(obj[props].typeData && obj[props].typeData.diagnostics && obj[props].typeData.diagnostics.length){
+                    childNode.diagnostics.push(obj[props].typeData.diagnostics);
+                    parentObj.diagnostics.push(obj[props].typeData.diagnostics);
+                }
+
                 parentObj.children.push(childNode);
-                treeMapper(obj[props], childNode);
+                treeMapper(obj[props], childNode, treeLevel+1);
             }
 
             else{
-                treeMapper(obj[props], parentObj);
+                treeMapper(obj[props], parentObj, treeLevel+1);
             }
         }
     }
-
-    return graphMapper(nodeArray, [], [], rootLevel);
-}
-
-function graphMapper (array: TreeNode[], graphNodes: any[], graphEdges: any[], level: number) {
-    for (let i=0; i < array.length && level <3 ; i++){
-        let node : any = array[i].nodeID;
-        let position : any = (node.match(/\d/g)).join("");
-        array[i] = {
-            ...array[i],
-            didCollapse: level === 2 ? false : true
-        };
-
-        graphNodes.push({
-            id: array[i].nodeID,
-            width: Math.max((array[i].value.length*9), 150),
-            height: 50,
-            label: graphNodes.length ? array[i].value : "Syntax Tree",
-            kind: array[i].kind,
-            leadingMinutiae: array[i].leadingMinutiae,
-            trailingMinutiae: array[i].trailingMinutiae,
-            layoutOptions: { 
-                'elk.position': '('+(toInteger(position))+', 0)'
-            },
-            ifParent: array[i].children.length ? true : false,
-            nodeColor: array[i].errorNode ? "#DB3247" : (array[i].nodeID.charAt(0) === "p" ? "#16B16F" : "#6640D1")
-        });
-
-        if(graphNodes.length > 1){
-            graphEdges.push({
-                id: `e${array[i].nodeID}`,
-                sources: [array[i].parentID],
-                targets: [array[i].nodeID]
-            });
-        }
-        
-        if(array[i].children.length){
-            graphMapper(array[i].children, graphNodes, graphEdges, ++level);
-            --level;
-        }
-    }
-
-    return [graphNodes, graphEdges];
 }

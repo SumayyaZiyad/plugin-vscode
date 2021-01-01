@@ -9,6 +9,7 @@ export interface TreeNode {
     leadingMinutiae: any[];
     trailingMinutiae: any[];
     errorNode?: any;
+    diagnostics: any[];
 }
 
 export const layoutOptions = {

@@ -7,9 +7,8 @@ export let nodeMembers: any[], nodeEdges: any[], nodeArray: TreeNode[];
 export function retrieveGraph (responseTree: JSON){
     console.log(responseTree);
     nodeArray = [];
-    const retrievedMap = treeMapper(responseTree, {});
-    nodeMembers = retrievedMap[0]; nodeEdges = retrievedMap[1];
-    return setGraph();
+    treeMapper(responseTree, {}, 0);
+    return updateSyntaxTree("xxx");
 }
 
 export function updateSyntaxTree (nodeID: string){
