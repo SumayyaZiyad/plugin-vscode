@@ -2,7 +2,7 @@ import { toInteger } from "lodash";
 import { TreeNode } from "./resources";
 import { nodeMembers, nodeEdges } from "./graphGenerator";
 
-export function updateTreeGraph(targetArray: TreeNode[], nodeID: string) {
+export function graphMapper(targetArray: TreeNode[], nodeID: string) {
     for (let i = 0; i < targetArray.length; i++) {
         let position = toInteger(targetArray[i].nodeID.replace(/\D/g, ''));
 
@@ -38,7 +38,7 @@ export function updateTreeGraph(targetArray: TreeNode[], nodeID: string) {
         }
 
         if (targetArray[i].didCollapse === true) {
-            updateTreeGraph(targetArray[i].children, nodeID);
+            graphMapper(targetArray[i].children, nodeID);
         }
     }
 }

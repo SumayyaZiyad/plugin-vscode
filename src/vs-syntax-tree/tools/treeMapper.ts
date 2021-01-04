@@ -13,24 +13,18 @@ export function treeMapper(obj: JSON, parentObj: TreeNode | any, treeLevel: numb
             if (obj[props].hasOwnProperty("kind" && "value" && "isToken")) {
                 if(obj[props].invalidNodes.length){
                     for (var element in obj[props].invalidNodes){
-                        childNode = {
-                            nodeID: `t${++nodeCount}`,
+                        parentObj.children.push({
+                            nodeID: `c${++nodeCount}`,
                             value: obj[props].invalidNodes[element].value,
                             kind: "Invalid Node",
                             parentID: parentObj.nodeID,
                             children: [],
                             errorNode: true
-                        };
-
-                        parentObj.diagnostics.push({
-                            message: childNode.kind
                         });
-
-                        parentObj.children.push(childNode);
                     }
                 }
 
-                childNode = {
+                parentObj.children.push({
                     nodeID: `c${++nodeCount}`,
                     value: obj[props].isMissing ? obj[props].kind : obj[props].value,
                     parentID: parentObj.nodeID,
@@ -38,17 +32,8 @@ export function treeMapper(obj: JSON, parentObj: TreeNode | any, treeLevel: numb
                     kind: obj[props].isMissing ? "Missing "+obj[props].kind : obj[props].kind,
                     leadingMinutiae: obj[props].leadingMinutiae,
                     trailingMinutiae: obj[props].trailingMinutiae,
-                    errorNode: obj[props].isMissing,
-                    diagnostics: []
-                };
-
-                if(obj[props].isMissing){
-                    parentObj.diagnostics.push({
-                        message: childNode.kind
-                    })
-                }
-
-                parentObj.children.push(childNode);
+                    errorNode: obj[props].isMissing
+                });
             }
 
             else if (props.match(/^[0-9]+$/) === null) {
@@ -60,16 +45,8 @@ export function treeMapper(obj: JSON, parentObj: TreeNode | any, treeLevel: numb
                     trailingMinutiae: obj[props].trailingMinutiae,
                     parentID: parentObj.nodeID,
                     didCollapse: treeLevel < 2 ? true : false,
-                    children: [],
-                    diagnostics: []
+                    children: []
                 };
-
-                if(obj[props].typeData && obj[props].typeData.diagnostics && obj[props].typeData.diagnostics.length > 0){
-                    childNode.diagnostics.push(obj[props].typeData.diagnostics);
-                    if(nodeArray.length){
-                        parentObj.diagnostics.push(childNode.diagnostics);
-                    }
-                }
 
                 nodeArray.length ? parentObj.children.push(childNode) : nodeArray.push(childNode);
                 treeMapper(obj[props], childNode, treeLevel+1);
@@ -84,20 +61,14 @@ export function treeMapper(obj: JSON, parentObj: TreeNode | any, treeLevel: numb
                     trailingMinutiae: obj[props].trailingMinutiae,
                     parentID: parentObj.nodeID,
                     didCollapse: treeLevel < 2 ? true : false,
-                    children: [],
-                    diagnostics: []
+                    children: []
                 };
-
-                if(obj[props].typeData && obj[props].typeData.diagnostics && obj[props].typeData.diagnostics.length){
-                    childNode.diagnostics.push(obj[props].typeData.diagnostics);
-                    parentObj.diagnostics.push(obj[props].typeData.diagnostics);
-                }
 
                 parentObj.children.push(childNode);
                 treeMapper(obj[props], childNode, treeLevel+1);
             }
 
-            else{
+            else {
                 treeMapper(obj[props], parentObj, treeLevel+1);
             }
         }

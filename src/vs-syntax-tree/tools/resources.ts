@@ -9,7 +9,6 @@ export interface TreeNode {
     leadingMinutiae: any[];
     trailingMinutiae: any[];
     errorNode?: any;
-    diagnostics: any[];
 }
 
 export const layoutOptions = {
@@ -17,5 +16,6 @@ export const layoutOptions = {
     'elk.direction': 'DOWN',
     'elk.layered.crossingMinimization.semiInteractive': 'true',
     'elk.edgeRouting': 'POLYLINE',
-    'elk.layered.mergeEdges': 'true'
+    'elk.layered.mergeEdges': 'true',
+    'elk.spacing.nodeNode': '30'
 };

@@ -22,30 +22,31 @@ function TreeNode(props: TreeNodeProps) {
         <div>
             <div
                 style = {{
-                    display: "flex",
-                    cursor: "default",
                     backgroundColor: props.node.nodeColor,
-                    flexDirection: "row",
-                    justifyContent: "space-around",
-                    margin: "auto",
-                    top: props.node.y,
-                    width: props.node.width,
-                    height: props.node.height,
-                    left: props.node.x,
                     borderRadius: 10,
-                    position: "absolute",
+                    cursor: "default",
+                    display: "flex",
+                    flexDirection: "row",
+                    height: props.node.height,
+                    justifyContent: "space-around",
+                    left: props.node.x,
                     lineHeight: "50px",
+                    margin: "auto",
+                    position: "absolute",
+                    top: props.node.y,
+                    width: props.node.width
                 }}
             >
                 <div
                     style = {{
                         color: "white",
                         fontSize: 14,
-                        textAlign: "center"
+                        textAlign: "center",
+                        width: "auto"
                     }}
-                    onMouseOver = {onHoverNode}
-                    onMouseLeave = {undoHoverNode}
                     onClick = {props.node.ifParent ? onClickNode : () => {}}
+                    onMouseLeave = {undoHoverNode}
+                    onMouseOver = {onHoverNode}
                 >
                     {props.node.label}
                 </div>
