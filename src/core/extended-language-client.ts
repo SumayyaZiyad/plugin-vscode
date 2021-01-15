@@ -23,39 +23,37 @@ import { Uri, Location } from "vscode";
 
 export const BALLERINA_LANG_ID = "ballerina";
 
-export interface BallerinaAST {
+export interface BallerinaSyntaxTree {
     kind: string;
     topLevelNodes: any[];
 }
 
-export interface BallerinaASTResponse {
-    ast?: BallerinaAST;
+export interface BallerinaSyntaxTreeResponse {
+    syntaxTree?: BallerinaSyntaxTree;
 }
 
 export interface BallerinaPackage {
+    name: string;
     kind: string;
     topLevelNodes: any[];
+    modules: BallerinaModule[];
+}
+
+export interface BallerinaModule {
+    name?: string;
+    default?: boolean;
+    functions?: any[];
+    services?: any[];
 }
 
 export interface BallerinaPackagesResponse {
-    packages?: BallerinaPackage;
+    packages?: BallerinaPackage[];
 }
 
-export interface GetASTRequest {
+export interface GetSyntaxTreeRequest {
     documentIdentifier: {
         uri: string;
     };
-}
-
-export interface ASTDidChangeResponse {
-    content?: string;
-}
-
-export interface ASTDidChangeEvent {
-    textDocumentIdentifier: {
-        uri: string;
-    };
-    ast: BallerinaAST;
 }
 
 export interface BallerinaExample {
@@ -75,15 +73,6 @@ export interface BallerinaExampleListRequest {
 
 export interface BallerinaExampleListResponse {
     samples: Array<BallerinaExampleCategory>;
-}
-
-export interface BallerinaFragmentASTRequest {
-    enclosingScope?: string;
-    expectedNodeType?: string;
-    source?: string;
-}
-
-export interface BallerinaFragmentASTResponse {
 }
 
 export interface BallerinaOASResponse {
@@ -168,31 +157,17 @@ export class ExtendedLangClient extends LanguageClient {
         return this.sendRequest("ballerinaSyntaxHighlighter/list", req);
     }
 
-    getAST(uri: Uri): Thenable<BallerinaASTResponse> {
-        const req: GetASTRequest = {
+    getSyntaxTree(uri: Uri): Thenable<BallerinaSyntaxTreeResponse> {
+        const req: GetSyntaxTreeRequest = {
             documentIdentifier: {
                 uri: uri.toString()
             }
         };
-        return this.sendRequest("ballerinaDocument/ast", req);
-    }
-
-    triggerASTDidChange(ast: BallerinaAST, uri: Uri): Thenable<ASTDidChangeEvent> {
-        const evt: ASTDidChangeEvent = {
-            textDocumentIdentifier: {
-                uri: uri.toString(),
-            },
-            ast
-        };
-        return this.sendRequest("ballerinaDocument/astDidChange", evt);
+        return this.sendRequest("ballerinaDocument/syntaxTree", req);
     }
 
     fetchExamples(args: BallerinaExampleListRequest = {}): Thenable<BallerinaExampleListResponse> {
         return this.sendRequest("ballerinaExample/list", args);
-    }
-
-    parseFragment(args: BallerinaFragmentASTRequest): Thenable<BallerinaFragmentASTResponse> {
-        return this.sendRequest("ballerinaFragment/ast", args).then((resp: any) => resp.ast);
     }
 
     getEndpoints(): Thenable<Array<any>> {

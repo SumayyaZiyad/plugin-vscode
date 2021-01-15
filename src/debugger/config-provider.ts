@@ -138,7 +138,7 @@ class BallerinaDebugAdapterDescriptorFactory implements DebugAdapterDescriptorFa
             log("Starting debug adapter: '" + cmd + "'");
         }
 
-        return new Promise((resolve) => {
+        return new Promise<void>((resolve) => {
             serverProcess.stdout.on('data', (data) => {
                 if (data.toString().includes('Debug server started')) {
                     resolve();

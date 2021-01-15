@@ -33,11 +33,11 @@ class WebViewRPCHandler {
         }
     }
 
-    addMethod(methodName, handler = () => {}) {
+    addMethod(methodName, handler = () => { }) {
         this.methods.push({ methodName, handler });
     }
 
-    invokeRemoteMethod(methodName, args, onReply = () => {}) {
+    invokeRemoteMethod(methodName, args, onReply = () => { }) {
         const msg = {
             id: this._sequence,
             methodName: methodName,
@@ -68,19 +68,12 @@ function getLangClient() {
                 });
             });
         },
-        getAST: (params) => {
+        getSyntaxTree: (params) => {
             return new Promise((resolve, reject) => {
-                webViewRPCHandler.invokeRemoteMethod('getAST', [params.documentIdentifier.uri], (resp) => {
+                webViewRPCHandler.invokeRemoteMethod('SyntaxTree', [params.documentIdentifier.uri], (resp) => {
                     resolve(resp);
                 });
             });
-        },
-        astDidChange: (params) => {
-            return new Promise((resolve, reject) => {
-                webViewRPCHandler.invokeRemoteMethod('astDidChange', [params.ast, params.textDocumentIdentifier.uri], (resp) => {
-                    resolve(resp);
-                });
-            })
         },
         getEndpoints: () => {
             return new Promise((resolve, reject) => {
@@ -89,19 +82,12 @@ function getLangClient() {
                 });
             })
         },
-        parseFragment: (fragment) => {
-            return new Promise((resolve, reject) => {
-                webViewRPCHandler.invokeRemoteMethod('parseFragment', [fragment], (resp) => {
-                    resolve(resp);
-                });
-            })
-        },
         revealRange: (params) => {
             if (params) {
                 return new Promise((resolve, reject) => {
                     webViewRPCHandler.invokeRemoteMethod(
-                        'revealRange', 
-                        [JSON.stringify(params)], 
+                        'revealRange',
+                        [JSON.stringify(params)],
                         (resp) => {
                             resolve(resp);
                         }
@@ -112,8 +98,8 @@ function getLangClient() {
         goToSource: (params) => {
             return new Promise((resolve, reject) => {
                 webViewRPCHandler.invokeRemoteMethod(
-                    'goToSource', 
-                    [JSON.stringify(params)], 
+                    'goToSource',
+                    [JSON.stringify(params)],
                     (resp) => {
                         resolve(resp);
                     }

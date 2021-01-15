@@ -61,7 +61,6 @@ export class BallerinaExtension {
     private clientOptions: LanguageClientOptions;
     public langClient?: ExtendedLangClient;
     public context?: ExtensionContext;
-    private projectTreeElementClickedCallbacks: Array<(construct: ConstructIdentifier) => void> = [];
     private webviewPanels: {
         [name: string]: WebviewPanel;
     };
@@ -499,16 +498,6 @@ export class BallerinaExtension {
 
     public overrideBallerinaHome(): boolean {
         return <boolean>workspace.getConfiguration().get(OVERRIDE_BALLERINA_HOME);
-    }
-
-    public projectTreeElementClicked(construct: ConstructIdentifier): void {
-        this.projectTreeElementClickedCallbacks.forEach((callback) => {
-            callback(construct);
-        });
-    }
-
-    public onProjectTreeElementClicked(callback: (construct: ConstructIdentifier) => void) {
-        this.projectTreeElementClickedCallbacks.push(callback);
     }
 
     public addWebviewPanel(name: string, panel: WebviewPanel) {

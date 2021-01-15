@@ -4,10 +4,10 @@ import { ExtendedLangClient } from 'src/core/extended-language-client';
 
 const getLangClientMethods = (langClient: ExtendedLangClient): WebViewMethod[] => {
     return [{
-        methodName: 'getAST',
+        methodName: 'getSyntaxTree',
         handler: (args: any[]) => {
             return langClient.onReady().then(() => {
-                return langClient.getAST(args[0]);
+                return langClient.getSyntaxTree(args[0]);
             });
         }
     },
@@ -20,30 +20,10 @@ const getLangClientMethods = (langClient: ExtendedLangClient): WebViewMethod[] =
         }
     },
     {
-        methodName: 'astDidChange',
-        handler: (args: any[]) => {
-            return langClient.onReady().then(() => {
-                return langClient.triggerASTDidChange(args[0], args[1]);
-            });
-        }
-    },
-    {
         methodName: 'getEndpoints',
         handler: (args: any[]) => {
             return langClient.onReady().then(() => {
                 return langClient.getEndpoints();
-            });
-        }
-    },
-    {
-        methodName: 'parseFragment',
-        handler: (args: any[]) => {
-            return langClient.onReady().then(() => {
-                return langClient.parseFragment({
-                    enclosingScope: args[0].enclosingScope,
-                    expectedNodeType: args[0].expectedNodeType,
-                    source: args[0].source
-                });
             });
         }
     },

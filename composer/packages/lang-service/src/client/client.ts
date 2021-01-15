@@ -1,12 +1,15 @@
 // tslint:disable-next-line:no-submodule-imports
 import { IConnection } from "monaco-languageclient/lib/connection";
-import { InitializeParams, InitializeResult,
-    Location, TextDocumentPositionParams } from "vscode-languageserver-protocol";
-import { BallerinaASTNode, BallerinaEndpoint, BallerinaSourceFragment } from "./ast-models";
-import { ASTDidChangeParams, ASTDidChangeResponse, BallerinaExampleListParams,
-    BallerinaExampleListResponse, BallerinaProject, GetASTParams, GetASTResponse,
-    GetBallerinaProjectParams, GetProjectASTParams, GetProjectASTResponse, GoToSourceParams,
-    IBallerinaLangClient, RevealRangeParams } from "./model";
+import {
+    InitializeParams, InitializeResult,
+    Location, TextDocumentPositionParams
+} from "vscode-languageserver-protocol";
+import { BallerinaEndpoint } from "./ast-models";
+import {
+    BallerinaExampleListParams, BallerinaExampleListResponse, BallerinaProject, GetBallerinaProjectParams,
+    GetProjectASTParams, GetProjectASTResponse, GetSyntaxTreeParams, GetSyntaxTreeResponse, GoToSourceParams,
+    IBallerinaLangClient, RevealRangeParams
+} from "./model";
 
 export class BallerinaLangClient implements IBallerinaLangClient {
 
@@ -19,35 +22,27 @@ export class BallerinaLangClient implements IBallerinaLangClient {
     public init(params: InitializeParams = initParams): Thenable<InitializeResult> {
         this.lsConnection.listen();
         return this.lsConnection.initialize(params)
-                .then((resp) => {
-                    this.isInitialized = true;
-                    return resp;
-                });
+            .then((resp) => {
+                this.isInitialized = true;
+                return resp;
+            });
     }
 
     public getProjectAST(params: GetProjectASTParams): Thenable<GetProjectASTResponse> {
         return this.lsConnection.sendRequest<GetProjectASTResponse>("ballerinaProject/packages", params);
     }
 
-    public getAST(params: GetASTParams): Thenable<GetASTResponse> {
-        return this.lsConnection.sendRequest<GetASTResponse>("ballerinaDocument/ast", params);
-    }
-
-    public astDidChange(params: ASTDidChangeParams): Thenable<ASTDidChangeResponse> {
-        return this.lsConnection.sendRequest("ballerinaDocument/astDidChange", params);
+    public getSyntaxTree(params: GetSyntaxTreeParams): Thenable<GetSyntaxTreeResponse> {
+        return this.lsConnection.sendRequest<GetSyntaxTreeResponse>("ballerinaDocument/syntaxTree", params);
     }
 
     public fetchExamples(params: BallerinaExampleListParams = {}): Thenable<BallerinaExampleListResponse> {
         return this.lsConnection.sendRequest("ballerinaExample/list", params);
     }
 
-    public parseFragment(params: BallerinaSourceFragment): Thenable<BallerinaASTNode> {
-        return this.lsConnection.sendRequest("ballerinaFragment/ast", params).then((resp: any) => resp.ast);
-    }
-
     public getEndpoints(): Thenable<BallerinaEndpoint[]> {
         return this.lsConnection.sendRequest("ballerinaSymbol/endpoints", {})
-                    .then((resp: any) => resp.endpoints);
+            .then((resp: any) => resp.endpoints);
     }
 
     public getBallerinaProject(params: GetBallerinaProjectParams): Thenable<BallerinaProject> {
@@ -60,7 +55,7 @@ export class BallerinaLangClient implements IBallerinaLangClient {
     }
 
     public goToSource(params: GoToSourceParams): void {
-       // TODO
+        // TODO
     }
 
     public revealRange(params: RevealRangeParams): void {

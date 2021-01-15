@@ -31,7 +31,7 @@ describe("AST utils", () => {
         server = new StdioBallerinaLangServer(process.env.BALLERINA_HOME);
         server.start();
 
-        client = await createStdioLangClient(server.lsProcess as ChildProcess, () => {/**/}, () => {/**/});
+        client = await createStdioLangClient(server.lsProcess as ChildProcess, () => {/**/ }, () => {/**/ });
         if (!client) {
             done("Could not initiate language client");
         }
@@ -43,14 +43,14 @@ describe("AST utils", () => {
     describe.skip("generates sources", () => {
         exampleBals.forEach((file) => {
             test(path.basename(file), async (done) => {
-                const astResp = await client.getAST({
+                const syntaxTreeResp = await client.getSyntaxTree({
                     documentIdentifier: { uri: URI.file(file).toString() }
                 });
-                if (!astResp.ast) {
+                if (!syntaxTreeResp.syntaxTree) {
                     throw new Error("Could not parse");
                 }
-                fs.readFile(file, {encoding: "utf8"}, (err, content) => {
-                    expect(genSource(astResp.ast)).toEqual(content);
+                fs.readFile(file, { encoding: "utf8" }, (err, content) => {
+                    expect(genSource(syntaxTreeResp.syntaxTree)).toEqual(content);
                 });
                 done();
             });
@@ -70,7 +70,7 @@ describe("AST utils", () => {
                 }
                 const tree = astResp.ast;
                 attachNode(functionAST, tree, tree, "topLevelNodes", tree.topLevelNodes.length);
-                fs.readFile(afterAttachBals[i], {encoding: "utf8"}, (err, content) => {
+                fs.readFile(afterAttachBals[i], { encoding: "utf8" }, (err, content) => {
                     expect(genSource(tree)).toEqual(content);
                     done();
                 });
